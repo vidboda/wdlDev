@@ -43,10 +43,10 @@ task fastqc {
 	String tmpDir
 	String fastqc
 	command {
-		${fastqc} --threads ${Threads} -d ${tmpDir} ${FastqR1} ${FastqR2} -o "${OutDir}/FASTQC_DIR"
+		${fastqc} --threads ${Threads} -d ${tmpDir} ${FastqR1} ${FastqR2} -o "${OutDir}FASTQC_DIR"
 	}
 	output {
-		File fastqcHtml = "${OutDir}${SampleID}${Suffix}_fastqc.html"
+		File fastqcHtml = "${OutDir}FASTQC_DIR/${SampleID}${Suffix}_fastqc.html"
 	}
 }
 
