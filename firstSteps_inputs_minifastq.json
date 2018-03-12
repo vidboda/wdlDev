@@ -5,9 +5,9 @@
   "firstSteps.bwaSamtools.outfile": "/home/mobidic/Devs/wdlDev/test_output/R782_S14.sorted.bam",
   "firstSteps.bwaSamtools.platform": "ILLUMINA",
   "firstSteps.fastqc.tmpDir": "/home/mobidic/Devs/wdlDev/test_output/FASTQC_TMP",
-  "firstSteps.outDir": "/home/mobidic/Devs/wdlDev/test_output/",
+  "firstSteps.outDir": "/home/mobidic/Devs/wdlDev/test_output/MiniFastqTest/",
   "firstSteps.threads": "4",
-  "firstSteps.fastqR2": "test_input/R782_S14_L001_R2_001.fastq.gz",
+  "firstSteps.fastqR2": "test_input/MiniFastqTest_R2.fastq.gz",
   "firstSteps.refFasta": "/usr/local/share/refData/genome/hg19/hg19.fa",
   "firstSteps.bwaSamtools.refAmb": "/usr/local/share/refData/genome/hg19/hg19.fa.amb",
   "firstSteps.bwaSamtools.refAnn": "/usr/local/share/refData/genome/hg19/hg19.fa.ann",
@@ -15,7 +15,7 @@
   "firstSteps.bwaSamtools.refPac": "/usr/local/share/refData/genome/hg19/hg19.fa.pac",
   "firstSteps.bwaSamtools.refSa": "/usr/local/share/refData/genome/hg19/hg19.fa.sa",
   "firstSteps.bwaSamtools.bwa": "/usr/local/bin/bwa",
-  "firstSteps.sampleID": "R782_S14",
-  "firstSteps.suffix": "L001_R1_001",
-  "firstSteps.fastqR1": "test_input/R782_S14_L001_R1_001.fastq.gz"
+  "firstSteps.sampleID": "MiniFastqTest",
+  "firstSteps.suffix": "_R1",
+  "firstSteps.fastqR1": "test_input/MiniFastqTest_R1.fastq.gz"
 }
