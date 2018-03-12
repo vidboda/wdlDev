@@ -1,0 +1,9 @@
+{
+  "testFastqc.fastqc.fastqc": "/usr/local/bin/fastqc",
+  "testFastqc.fastqc.fastqR2": "test_input/R782_S14_L001_R1_001.fastq.gz",
+  "testFastqc.fastqc.out_dir": "/home/mobidic/Devs/wdl/test_output/FASTQC_DIR",
+  "testFastqc.fastqc.threads": "4",
+  "testFastqc.fastqc.fastqR1": "test_input/R782_S14_L001_R2_001.fastq.gz",
+  "testFastqc.fastqc.tmp_dir": "/home/mobidic/Devs/wdl/test_output/FASTQC_TMP",
+  "testFastqc.fastqc.sampleID": "R782_S14_L001_R2_001"
+}
