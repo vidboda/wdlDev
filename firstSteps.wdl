@@ -1,4 +1,5 @@
 workflow firstSteps {
+	#get fastqc and bwa|samtools sort
 	#variables usable by multiple tasks
 	File fastqR1
 	File fastqR2
