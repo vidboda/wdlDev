@@ -7,6 +7,8 @@ workflow firstSteps {
 	String suffix
 	String outDir 
 	File refFasta
+	#index file for samtools
+	File refFai
 	String samtools	
 	call fastqc {
 		input: Threads=threads,
@@ -19,6 +21,7 @@ workflow firstSteps {
 	call bwaSamtools {
 		input: SampleID=sampleID,
 		RefFasta=refFasta,
+		RefFai=refFai,
 		FastqR1=fastqR1,
 		FastqR2=fastqR2,
 		Samtools=samtools,
@@ -50,6 +53,7 @@ task bwaSamtools {
 	#global variables
 	String SampleID
 	File RefFasta
+	File RefFai
 	File FastqR1
 	File FastqR2
 	String Samtools
@@ -58,6 +62,13 @@ task bwaSamtools {
 	#task specific variables
 	String bwa
 	String platform
+	#index files for bwa
+	File refAmb
+	File refAnn
+	File refBwt
+	File refPac
+	File refSa
+
 
 	String outfile
 	command {
