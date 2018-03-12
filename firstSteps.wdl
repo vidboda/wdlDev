@@ -45,7 +45,7 @@ task fastqc {
 		${fastqc} --threads ${Threads} -d ${tmpDir} ${FastqR1} ${FastqR2} -o "${OutDir}/FASTQC_DIR"
 	}
 	output {
-		File fastqcHtml = "${OutDir}${SampleID}_${Suffix}_fastqc.html"
+		File fastqcHtml = "${OutDir}${SampleID}${Suffix}_fastqc.html"
 	}
 }
 
