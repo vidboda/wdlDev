@@ -12,6 +12,7 @@ workflow firstSteps {
 	File refFai
 	String samtools
 	String sambamba
+	String srun
 
 	call fastqc {
 		input: 
@@ -20,7 +21,8 @@ workflow firstSteps {
 		FastqR2 = fastqR2,
 		OutDir = outDir,
 		SampleID = sampleID,
-		Suffix = suffix
+		Suffix = suffix,
+		Srun = srun
 	}
 	call bwaSamtools {
 		input: 
@@ -32,6 +34,7 @@ workflow firstSteps {
 		Samtools = samtools,
 		Threads = threads,
 		OutDir = outDir,
+		Srun = srun
 	}
 	call sambambaMarkDupIndex {
 	  	input:
@@ -39,7 +42,8 @@ workflow firstSteps {
 	    Threads = threads,
 	    OutDir = outDir,
 	    SortedBam = bwaSamtools.sortedBam,
-	    Sambamba = sambamba
+	    Sambamba = sambamba,
+	    Srun = srun
 	}
 	call sambambaFlagStat {
 		input:
@@ -47,12 +51,14 @@ workflow firstSteps {
 		OutDir = outDir,
 		Threads = threads,
 		MarkedBam = sambambaMarkDupIndex.markedBam,
-		Sambamba = sambamba
+		Sambamba = sambamba,
+		Srun = srun
 	}
 }
 
 task fastqc {
 	#global variables
+	String Srun
 	Int Threads
 	File FastqR1
 	File FastqR2
@@ -65,7 +71,7 @@ task fastqc {
 		mkdir ${OutDir}
 		mkdir ${OutDir}FASTQC_DIR
 		mkdir ${OutDir}FASTQC_DIR/tmp
-		${fastqc} --threads ${Threads} -d ${OutDir}FASTQC_DIR/tmp ${FastqR1} ${FastqR2} -o "${OutDir}FASTQC_DIR"
+		${Srun} ${fastqc} --threads ${Threads} -d ${OutDir}FASTQC_DIR/tmp ${FastqR1} ${FastqR2} -o "${OutDir}FASTQC_DIR"
 		rm -r ${OutDir}FASTQC_DIR/tmp
 	}
 	output {
@@ -75,6 +81,7 @@ task fastqc {
 
 task bwaSamtools {
 	#global variables
+	String Srun
 	String SampleID
 	File RefFasta
 	File RefFai
@@ -93,7 +100,7 @@ task bwaSamtools {
 	File refPac
 	File refSa
 	command {
-		${bwa} mem -M -t ${Threads} -R "@RG\tID:${SampleID}\tSM:${SampleID}\tPL:${platform}" ${RefFasta} ${FastqR1} ${FastqR2} | ${Samtools} sort -@ ${Threads} -l 1 -o ${OutDir}/${SampleID}.sorted.bam
+		${Srun} ${bwa} mem -M -t ${Threads} -R "@RG\tID:${SampleID}\tSM:${SampleID}\tPL:${platform}" ${RefFasta} ${FastqR1} ${FastqR2} | ${Samtools} sort -@ ${Threads} -l 1 -o ${OutDir}/${SampleID}.sorted.bam
 	}
 	output {
 		File sortedBam = "${OutDir}${SampleID}.sorted.bam"
@@ -102,6 +109,7 @@ task bwaSamtools {
 
 task sambambaMarkDupIndex {
 	#global variables
+	String Srun
 	String SampleID
 	Int Threads
 	String OutDir
@@ -110,7 +118,7 @@ task sambambaMarkDupIndex {
 	String tmpDir
 	File SortedBam
 	command {
-		${Sambamba} markdup -t ${Threads} --tmpdir=${tmpDir} -l 1 ${SortedBam} ${OutDir}${SampleID}.sorted.markdup.bam
+		${Srun} ${Sambamba} markdup -t ${Threads} --tmpdir=${tmpDir} -l 1 ${SortedBam} ${OutDir}${SampleID}.sorted.markdup.bam
 		rm -r ${tmpDir}
 		rm ${SortedBam}
 	}
@@ -121,6 +129,7 @@ task sambambaMarkDupIndex {
 
 task sambambaFlagStat {
 	#global variables
+	String Srun
 	String SampleID
 	Int Threads
 	String OutDir
@@ -128,7 +137,7 @@ task sambambaFlagStat {
 	#task specific variables
 	File MarkedBam
 	command {
-		${Sambamba} flagstat -t ${Threads} ${MarkedBam} > ${OutDir}${SampleID}_stats.txt
+		${Srun} ${Sambamba} flagstat -t ${Threads} ${MarkedBam} > ${OutDir}${SampleID}_stats.txt
 	}
 	output {
 		File Stats = "${OutDir}${SampleID}_stats.txt"
