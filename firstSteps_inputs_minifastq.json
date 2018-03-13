@@ -13,7 +13,7 @@
   "firstSteps.bwaSamtools.bwa": "/usr/local/bin/bwa",
   "firstSteps.refFai": "/usr/local/share/refData/genome/hg19/hg19.fa.fai",
   "firstSteps.sampleID": "MiniFastqTest",
-  "firstSteps.sambambaMarkDupIndex.sambamba": "/usr/local/bin/sambamba",
+  "firstSteps.sambamba": "/usr/local/bin/sambamba",
   "firstSteps.bwaSamtools.refBwt": "/usr/local/share/refData/genome/hg19/hg19.fa.bwt",
   "firstSteps.fastqR1": "test_input/MiniFastqTest_R1.fastq.gz",
   "firstSteps.bwaSamtools.refPac": "/usr/local/share/refData/genome/hg19/hg19.fa.pac",

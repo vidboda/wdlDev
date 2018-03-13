@@ -10,7 +10,9 @@ workflow firstSteps {
 	File refFasta
 	#index file for samtools
 	File refFai
-	String samtools	
+	String samtools
+	String sambamba
+
 	call fastqc {
 		input: 
 		Threads = threads,
@@ -36,7 +38,16 @@ workflow firstSteps {
 	    SampleID = sampleID,
 	    Threads = threads,
 	    OutDir = outDir,
-	    SortedBam = bwaSamtools.sortedBam
+	    SortedBam = bwaSamtools.sortedBam,
+	    Sambamba = sambamba
+	}
+	call sambambaFlagStat {
+		input:
+		SampleID = sampleID,
+		OutDir = outDir,
+		Threads = threads,
+		MarkedBam = sambambaMarkDupIndex.markedBam,
+		Sambamba = sambamba
 	}
 }
 
@@ -94,16 +105,32 @@ task sambambaMarkDupIndex {
 	String SampleID
 	Int Threads
 	String OutDir
+	String Sambamba
 	#task specific variables
 	String tmpDir
-	String sambamba
 	File SortedBam
 	command {
-		${sambamba} markdup -t ${Threads} --tmpdir=${tmpDir} -l 1 ${SortedBam} ${OutDir}${SampleID}.sorted.markdup.bam
+		${Sambamba} markdup -t ${Threads} --tmpdir=${tmpDir} -l 1 ${SortedBam} ${OutDir}${SampleID}.sorted.markdup.bam
 		rm -r ${tmpDir}
 		rm ${SortedBam}
 	}
 	output {
 		File markedBam = "${OutDir}${SampleID}.sorted.markdup.bam"
+	}
+}
+
+task sambambaFlagStat {
+	#global variables
+	String SampleID
+	Int Threads
+	String OutDir
+	String Sambamba
+	#task specific variables
+	File MarkedBam
+	command {
+		${Sambamba} flagstat -t ${Threads} ${MarkedBam} > ${OutDir}${SampleID}_stats.txt
+	}
+	output {
+		File Stats = "${OutDir}${SampleID}_stats.txt"
 	}
 }
