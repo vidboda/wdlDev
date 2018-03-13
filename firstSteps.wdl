@@ -12,22 +12,31 @@ workflow firstSteps {
 	File refFai
 	String samtools	
 	call fastqc {
-		input: Threads=threads,
-		FastqR1=fastqR1,
-		FastqR2=fastqR2,
-		OutDir=outDir,
-		SampleID=sampleID,
-		Suffix=suffix
+		input: 
+		Threads = threads,
+		FastqR1 = fastqR1,
+		FastqR2 = fastqR2,
+		OutDir = outDir,
+		SampleID = sampleID,
+		Suffix = suffix
 	}
 	call bwaSamtools {
-		input: SampleID=sampleID,
-		RefFasta=refFasta,
-		RefFai=refFai,
-		FastqR1=fastqR1,
-		FastqR2=fastqR2,
-		Samtools=samtools,
-		Threads=threads,
-		OutDir=outDir,
+		input: 
+		SampleID = sampleID,
+		RefFasta = refFasta,
+		RefFai = refFai,
+		FastqR1 = fastqR1,
+		FastqR2 = fastqR2,
+		Samtools = samtools,
+		Threads = threads,
+		OutDir = outDir,
+	}
+	call sambambaMarkDup {
+	  	input:
+	    SampleID = sampleID,
+	    Threads = threads,
+	    OutDir = outDir,
+	    SortedBam = bwaSamtools.sortedBam
 	}
 }
 
@@ -44,6 +53,7 @@ task fastqc {
 	String fastqc
 	command {
 		${fastqc} --threads ${Threads} -d ${tmpDir} ${FastqR1} ${FastqR2} -o "${OutDir}FASTQC_DIR"
+		rm -r ${tmpDir}
 	}
 	output {
 		File fastqcHtml = "${OutDir}FASTQC_DIR/${SampleID}${Suffix}_fastqc.html"
@@ -69,13 +79,28 @@ task bwaSamtools {
 	File refBwt
 	File refPac
 	File refSa
-
-
-	String outfile
 	command {
 		${bwa} mem -M -t ${Threads} -R "@RG\tID:${SampleID}\tSM:${SampleID}\tPL:${platform}" ${RefFasta} ${FastqR1} ${FastqR2} | ${Samtools} sort -@ ${Threads} -l 1 -o ${OutDir}/${SampleID}.sorted.bam
 	}
 	output {
 		File sortedBam = "${OutDir}${SampleID}.sorted.bam"
+	}
+}
+
+task sambambaMarkDup {
+	#global variables
+	String SampleID
+	Int Threads
+	String OutDir
+	#task specific variables
+	String tmpDir
+	String sambamba
+	File SortedBam
+	command {
+		${sambamba} markdup -t ${Threads} --tmpdir=${tmpDir} -l 1 ${SortedBam} ${OutDir}${SampleID}.sorted.markdup.bam
+		rm -r ${tmpDir}
+	}
+	output {
+		File markedBam = "${OutDir}${SampleID}.sorted.markdup.bam"
 	}
 }
