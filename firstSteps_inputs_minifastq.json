@@ -19,5 +19,5 @@
   "firstSteps.bwaSamtools.refPac": "/usr/local/share/refData/genome/hg19/hg19.fa.pac",
   "firstSteps.bwaSamtools.refAnn": "/usr/local/share/refData/genome/hg19/hg19.fa.ann",
   "firstSteps.srunLow": "",
-  "firstSteps.srunHigh": "",
+  "firstSteps.srunHigh": ""
 }

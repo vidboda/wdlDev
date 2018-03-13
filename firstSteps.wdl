@@ -12,7 +12,8 @@ workflow firstSteps {
 	File refFai
 	String samtools
 	String sambamba
-	String srun
+	String srunLow
+	String srunHigh
 
 	call fastqc {
 		input: 
@@ -22,7 +23,7 @@ workflow firstSteps {
 		OutDir = outDir,
 		SampleID = sampleID,
 		Suffix = suffix,
-		Srun = srun
+		Srun = srunHigh
 	}
 	call bwaSamtools {
 		input: 
@@ -34,7 +35,7 @@ workflow firstSteps {
 		Samtools = samtools,
 		Threads = threads,
 		OutDir = outDir,
-		Srun = srun
+		Srun = srunHigh
 	}
 	call sambambaMarkDupIndex {
 	  	input:
@@ -43,7 +44,7 @@ workflow firstSteps {
 	    OutDir = outDir,
 	    SortedBam = bwaSamtools.sortedBam,
 	    Sambamba = sambamba,
-	    Srun = srun
+	    Srun = srunHigh
 	}
 	call sambambaFlagStat {
 		input:
@@ -52,7 +53,7 @@ workflow firstSteps {
 		Threads = threads,
 		MarkedBam = sambambaMarkDupIndex.markedBam,
 		Sambamba = sambamba,
-		Srun = srun
+		Srun = srunHigh
 	}
 }
 
