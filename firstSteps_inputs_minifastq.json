@@ -2,7 +2,6 @@
   "firstSteps.samtools": "/usr/local/bin/samtools",
   "firstSteps.refFai": "/usr/local/share/refData/genome/hg19/hg19.fa.fai",
   "firstSteps.fastqc.fastqc": "/usr/local/bin/fastqc",
-  "firstSteps.bwaSamtools.outfile": "/home/mobidic/Devs/wdlDev/test_output/R782_S14.sorted.bam",
   "firstSteps.bwaSamtools.platform": "ILLUMINA",
   "firstSteps.fastqc.tmpDir": "/home/mobidic/Devs/wdlDev/test_output/FASTQC_TMP",
   "firstSteps.outDir": "/home/mobidic/Devs/wdlDev/test_output/MiniFastqTest/",
