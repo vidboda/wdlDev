@@ -31,7 +31,7 @@ workflow firstSteps {
 		Threads = threads,
 		OutDir = outDir,
 	}
-	call sambambaMarkDup {
+	call sambambaMarkDupIndex {
 	  	input:
 	    SampleID = sampleID,
 	    Threads = threads,
@@ -49,11 +49,13 @@ task fastqc {
 	String SampleID
 	String Suffix
 	#task specific variables
-	String tmpDir
 	String fastqc
 	command {
-		${fastqc} --threads ${Threads} -d ${tmpDir} ${FastqR1} ${FastqR2} -o "${OutDir}FASTQC_DIR"
-		rm -r ${tmpDir}
+		mkdir ${OutDir}
+		mkdir ${OutDir}FASTQC_DIR
+		mkdir ${OutDir}FASTQC_DIR/tmp
+		${fastqc} --threads ${Threads} -d ${OutDir}FASTQC_DIR/tmp ${FastqR1} ${FastqR2} -o "${OutDir}FASTQC_DIR"
+		rm -r ${OutDir}FASTQC_DIR/tmp
 	}
 	output {
 		File fastqcHtml = "${OutDir}FASTQC_DIR/${SampleID}${Suffix}_fastqc.html"
@@ -87,7 +89,7 @@ task bwaSamtools {
 	}
 }
 
-task sambambaMarkDup {
+task sambambaMarkDupIndex {
 	#global variables
 	String SampleID
 	Int Threads
@@ -99,6 +101,7 @@ task sambambaMarkDup {
 	command {
 		${sambamba} markdup -t ${Threads} --tmpdir=${tmpDir} -l 1 ${SortedBam} ${OutDir}${SampleID}.sorted.markdup.bam
 		rm -r ${tmpDir}
+		rm ${SortedBam}
 	}
 	output {
 		File markedBam = "${OutDir}${SampleID}.sorted.markdup.bam"
