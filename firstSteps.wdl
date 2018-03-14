@@ -69,9 +69,9 @@ task fastqc {
 	#task specific variables
 	String fastqc
 	command {
-		mkdir ${OutDir}
-		mkdir ${OutDir}FASTQC_DIR
-		mkdir ${OutDir}FASTQC_DIR/tmp
+		mkdir -m 775 ${OutDir}
+		mkdir -m 775 ${OutDir}FASTQC_DIR
+		mkdir -m 775 ${OutDir}FASTQC_DIR/tmp
 		${Srun} ${fastqc} --threads ${Threads} -d ${OutDir}FASTQC_DIR/tmp ${FastqR1} ${FastqR2} -o "${OutDir}FASTQC_DIR"
 		rm -r ${OutDir}FASTQC_DIR/tmp
 	}
