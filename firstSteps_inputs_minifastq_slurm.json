@@ -1,11 +1,11 @@
 {
-  "firstSteps.bwaSamtools.refSa": " /nfs/work/mobidic/local/share/refData/genome/hg19/hg19.fa.sa",
+  "firstSteps.bwaSamtools.refSa": "/nfs/work/mobidic/local/share/refData/genome/hg19/hg19.fa.sa",
   "firstSteps.suffix": "_R1",
   "firstSteps.samtools": "/nfs/work/mobidic/local/bin/samtools",
   "firstSteps.fastqc.fastqc": "/nfs/work/mobidic/local/bin/fastqc",
   "firstSteps.bwaSamtools.platform": "ILLUMINA",
   "firstSteps.bwaSamtools.refAmb": "/nfs/work/mobidic/local/share/refData/genome/hg19/hg19.fa.amb",
-  "firstSteps.sambambaMarkDupIndex.tmpDir": "/home/bauxd/work-mobidic/wdlDev/test_output/SAMBAMBA_TMP",
+  "firstSteps.sambambaMarkDupIndex.tmpDir": "/nfs/work/mobidic/wdlDev/test_output/SAMBAMBA_TMP",
   "firstSteps.outDir": "/nfs/work/mobidic/wdlDev/test_output/MiniFastqTest/",
   "firstSteps.threads": "28",
   "firstSteps.fastqR2": "test_input/MiniFastqTest_R2.fastq.gz",
