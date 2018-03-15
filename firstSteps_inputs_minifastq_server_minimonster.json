@@ -1,0 +1,23 @@
+{
+  "firstSteps.bwaSamtools.refSa": "/usr/local/share/refData/genome/hg19/hg19.fa.sa",
+  "firstSteps.suffix": "_R1",
+  "firstSteps.samtools": "/usr/local/bin/samtools",
+  "firstSteps.fastqc.fastqc": "/usr/local/bin/fastqc",
+  "firstSteps.bwaSamtools.platform": "ILLUMINA",
+  "firstSteps.bwaSamtools.refAmb": "/usr/local/share/refData/genome/hg19/hg19.fa.amb",
+  "firstSteps.sambambaMarkDupIndex.tmpDir": "/home/mobidic/Devs/wdlDev/test_output/SAMBAMBA_TMP",
+  "firstSteps.outDir": "/home/mobidic/Devs/wdlDev/test_output/MiniFastqTest/",
+  "firstSteps.threads": "4",
+  "firstSteps.fastqR2": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R2.fastq.gz",
+  "firstSteps.refFasta": "/usr/local/share/refData/genome/hg19/hg19.fa",
+  "firstSteps.bwaSamtools.bwa": "/usr/local/bin/bwa",
+  "firstSteps.refFai": "/usr/local/share/refData/genome/hg19/hg19.fa.fai",
+  "firstSteps.sampleID": "MiniFastqTest",
+  "firstSteps.sambamba": "/usr/local/bin/sambamba",
+  "firstSteps.bwaSamtools.refBwt": "/usr/local/share/refData/genome/hg19/hg19.fa.bwt",
+  "firstSteps.fastqR1": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R1.fastq.gz",
+  "firstSteps.bwaSamtools.refPac": "/usr/local/share/refData/genome/hg19/hg19.fa.pac",
+  "firstSteps.bwaSamtools.refAnn": "/usr/local/share/refData/genome/hg19/hg19.fa.ann",
+  "firstSteps.srunLow": "",
+  "firstSteps.srunHigh": ""
+}
