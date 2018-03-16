@@ -1,0 +1,11 @@
+{
+  "wgs.sampleID": "MiniFastqTest",
+  "wgs.outDir": "/home/mobidic/Devs/wdlDev/test_output/",
+  "wgs.fastqcExe": "/usr/local/bin/fastqc",
+  "wgs.threads": "4",
+  "wgs.suffix1": "_R1",
+  "wgs.suffix2": "_R2",
+  "wgs.fastqR2": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R2.fastq.gz",
+  "wgs.srun": "",
+  "wgs.fastqR1": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R1.fastq.gz"
+}
