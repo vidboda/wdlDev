@@ -1,4 +1,4 @@
-workflow firstSteps {
+workflow wgs {
 	#get fastqc and bwa|samtools sort
 	#variables usable by multiple tasks
 	File fastqR1
@@ -6,7 +6,7 @@ workflow firstSteps {
 	Int threads
 	String sampleID
 	String suffix
-	String outDir 
+	#String outDir 
 	File refFasta
 	#index file for samtools
 	File refFai
@@ -14,10 +14,17 @@ workflow firstSteps {
 	String sambamba
 	String srunLow
 	String srunHigh
+	#attempt to run 
+	String remoteCommand
+	#manage different modes
+	Boolean wgs
+	Boolean capture
+	Boolean amplicon
 
 	call fastqc {
 		input: 
 		Threads = threads,
+		RemoteCommand = remoteCommand,
 		FastqR1 = fastqR1,
 		FastqR2 = fastqR2,
 		OutDir = outDir,
