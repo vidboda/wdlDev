@@ -5,8 +5,8 @@
   "testFastqc_remote.fastqc.fastqR1": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R1.fastq.gz",
   "testFastqc_remote.fastqc.sampleID": "MiniFastqTest",
   "testFastqc_remote.fastqc.suffix": "_R1",
-  "testFastqc_remote.fastqc.sshKey": "/home/mobidic/.ssh/id_thau",
-  "testFastqc_remote.fastqc.remoteAddress": "bauxd@muse-login.hpc-lr.univ-montp2.fr",
+  "testFastqc_remote.fastqc.sshKey": "",
+  "testFastqc_remote.fastqc.remoteAddress": "",
   "testFastqc_remote.fastqc.remoteLocation": "/nfs/work/mobidic/wdlDev/test_input/",
-  "testFastqc_remote.fastqc.srun": "srun -N1 -n1 -c28 --account=IURC --partition=defq"
+  "testFastqc_remote.fastqc.srun": "srun -N1 -n1 -c28 --account= --partition=defq"
 }
