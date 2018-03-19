@@ -12,13 +12,17 @@ workflow wgs {
 	String suffix1
 	String suffix2
 	File fastqR1
-	File fastqR2
-	String samtoolsExe
-	String sambambaExe
+	File fastqR2	
 	File refFasta
 	File refFai
 	Boolean isIntervalBedFile
 	File intervalBedFile
+	#execs
+	String samtoolsExe
+	String sambambaExe
+	String bedToolsExe
+	String awkExe
+	String sortExe
 	#fastqc	
 	String fastqcExe
 	String outDir
@@ -30,6 +34,8 @@ workflow wgs {
 	File refBwt
 	File refPac
 	File refSa
+	#computePoorCoverage
+
 
 	call runFastqc.fastqc {
 		input:
@@ -74,11 +80,19 @@ workflow wgs {
 	if (isIntervalBedFile) {
 		call runComputePoorCoverage.computePoorCoverage {
 			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			GenomeVersion = genomeVersion,
+			BedToolsExe = bedToolsExe,
+			IntervalBedFile = intervalBedFile,
+			BedtoolsLowCoverage = bedtoolsLowCoverage,
+			BedToolsSmallInterval = bedToolsSmallInterval,
+			BamFile = bwaSamtools.sortedBam
+		}
+		call collectHsMetrics {
 
 		}
-#		call collectHsMetrics {
-#
-#		}
 #		call collectInsertSizeMetrics {
 #
 #		}
