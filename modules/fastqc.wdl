@@ -1,13 +1,15 @@
 task fastqc {
+	#global variables
 	String SrunHigh
-	Int Threads
+	Int Threads	
+	String SampleID
+	String OutDir
 	File FastqR1
 	File FastqR2
-	String SampleID
+	#task specific variables
 	String Suffix1
 	String Suffix2
-	String FastqcExe
-	String OutDir
+	String FastqcExe	
 	command {
 		mkdir ${OutDir}${SampleID}
 		mkdir "${OutDir}${SampleID}/FASTQC_DIR"
