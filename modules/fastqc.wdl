@@ -14,9 +14,9 @@ task fastqc {
 		${SrunHigh} ${FastqcExe} --threads ${Threads} ${FastqR1} ${FastqR2} -o "${OutDir}${SampleID}/FASTQC_DIR"
 	}
 	output {
-		File fastqcZipR1 = "${OutDir}${SampleID}/${SampleID}${Suffix1}_fastqc.zip"
-		File fastqcHtmlR1 = "${OutDir}${SampleID}/${SampleID}${Suffix1}_fastqc.html"
-		File fastqcZipR2 = "${OutDir}${SampleID}/${SampleID}${Suffix2}_fastqc.zip"
-		File fastqcHtmlR2 = "${OutDir}${SampleID}/${SampleID}${Suffix2}_fastqc.html"
+		File fastqcZipR1 = "${OutDir}${SampleID}/FASTQC_DIR/${SampleID}${Suffix1}_fastqc.zip"
+		File fastqcHtmlR1 = "${OutDir}${SampleID}/FASTQC_DIR/${SampleID}${Suffix1}_fastqc.html"
+		File fastqcZipR2 = "${OutDir}${SampleID}/FASTQC_DIR/${SampleID}${Suffix2}_fastqc.zip"
+		File fastqcHtmlR2 = "${OutDir}${SampleID}/FASTQC_DIR/${SampleID}${Suffix2}_fastqc.html"
 	}
 }
