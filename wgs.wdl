@@ -1,5 +1,7 @@
 import "/home/mobidic/Devs/wdlDev/modules/fastqc.wdl" as runFastqc
 import "/home/mobidic/Devs/wdlDev/modules/bwaSamtools.wdl" as runBwaSamtools
+import "/home/mobidic/Devs/wdlDev/modules/sambambaIndex.wdl" as runSambambaIndex
+import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
 
 workflow wgs {
 	#global
@@ -12,8 +14,11 @@ workflow wgs {
 	File fastqR1
 	File fastqR2
 	String samtoolsExe
+	String sambambaExe
 	File refFasta
 	File refFai
+	Boolean isIntervalBedFile
+	File intervalBedFile
 	#fastqc	
 	String fastqcExe
 	String outDir
@@ -57,4 +62,28 @@ workflow wgs {
 		RefPac = refPac,
 		RefSa = refSa
 	}
+	call runSambambaIndex.sambambaIndex {
+		input:
+		SrunHigh = srunHigh,
+		Threads = threads,
+		SampleID = sampleID,
+		OutDir = outDir,
+		SambambaExe = sambambaExe,
+		BamFile = bwaSamtools.sortedBam
+	}
+	if (isIntervalBedFile) {
+		call runComputePoorCoverage.computePoorCoverage {
+			input:
+
+		}
+#		call collectHsMetrics {
+#
+#		}
+#		call collectInsertSizeMetrics {
+#
+#		}
+	}
+#	call haplotypeCallerERC {
+#
+#	}
 }

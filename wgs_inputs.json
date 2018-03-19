@@ -18,5 +18,6 @@
   "wgs.bwaExe": "/usr/local/bin/bwa",
   "wgs.platform": "ILLUMINA",
   "wgs.srunLow": "",
-  "wgs.fastqR1": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R1.fastq.gz"
+  "wgs.fastqR1": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R1.fastq.gz",
+  "wgs.sambambaExe" : "/usr/local/bin/sambamba"
 }

@@ -7,7 +7,7 @@ task bwaSamtools {
 	File FastqR1
 	File FastqR2
 	String SamtoolsExe
-	#task specific variables	
+	#task specific variables
 	String BwaExe
 	String Platform
 	File RefFasta
@@ -19,7 +19,7 @@ task bwaSamtools {
 	File RefPac
 	File RefSa
 	command {
-		${SrunHigh} ${BwaExe} mem -M -t ${Threads} -R "@RG\tID:${SampleID}\tSM:${SampleID}\tPL:${Platform}" ${RefFasta} ${FastqR1} ${FastqR2} | ${SamtoolsExe} sort -@ ${Threads} -l 1 -o ${OutDir}${SampleID}/${SampleID}.sorted.bam
+		${SrunHigh} ${BwaExe} mem -M -t ${Threads} -R "@RG\tID:${SampleID}\tSM:${SampleID}\tPL:${Platform}" ${RefFasta} ${FastqR1} ${FastqR2} | ${SamtoolsExe} sort -@ ${Threads} -l 1 -o "${OutDir}${SampleID}/${SampleID}.sorted.bam"
 	}
 	output {
 		File sortedBam = "${OutDir}${SampleID}/${SampleID}.sorted.bam"
