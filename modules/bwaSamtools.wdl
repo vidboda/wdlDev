@@ -19,7 +19,13 @@ task bwaSamtools {
 	File RefPac
 	File RefSa
 	command {
-		${SrunHigh} ${BwaExe} mem -M -t ${Threads} -R "@RG\tID:${SampleID}\tSM:${SampleID}\tPL:${Platform}" ${RefFasta} ${FastqR1} ${FastqR2} | ${SamtoolsExe} sort -@ ${Threads} -l 1 -o "${OutDir}${SampleID}/${SampleID}.bam"
+		${SrunHigh} ${BwaExe} mem -M -t ${Threads} \
+		-R "@RG\tID:${SampleID}\tSM:${SampleID}\tPL:${Platform}" \
+		${RefFasta} \
+		${FastqR1} \
+		${FastqR2} \
+		| ${SamtoolsExe} sort -@ ${Threads} -l 1 \
+		-o "${OutDir}${SampleID}/${SampleID}.bam"
 	}
 	output {
 		File sortedBam = "${OutDir}${SampleID}/${SampleID}.bam"
