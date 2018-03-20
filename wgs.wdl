@@ -149,8 +149,9 @@ workflow wgs {
 			OutDir = outDir,
 			GatkExe = gatkExe,
 			RefFasta = refFasta,
+			RefFai = refFai,
 			BamFile = bwaSamtools.sortedBam,
-			BaitIntervals = gatkBedToPicardIntervalList.picardIntervals
+			BaitIntervals = gatkBedToPicardIntervalList.picardIntervals,
 			TargetIntervals = gatkBedToPicardIntervalList.picardIntervals
 		}
 	}

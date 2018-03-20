@@ -12,10 +12,10 @@ task gatkBedToPicardIntervalList {
 		cp ${IntervalBedFile} "${OutDir}${SampleID}/Intervals.bed"
 		${SrunLow} ${GatkExe} BedToIntervalList \
 		-I ${IntervalBedFile} \
-		-O "${OutDir}${SampleID}/Intervals.Picard.list" \
+		-O "${OutDir}${SampleID}/picard.interval_list" \
 		-SD ${RefDict}
 	}
 	output {
-		File picardIntervals = "${OutDir}${SampleID}/Intervals.Picard.list"
+		File picardIntervals = "${OutDir}${SampleID}/picard.interval_list"
 	}
 }

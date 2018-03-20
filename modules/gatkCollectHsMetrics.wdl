@@ -6,7 +6,8 @@ task gatkCollectHsMetrics {
 	String OutDir
 	String GatkExe
 	File RefFasta
-	#task specific variables
+	File RefFai
+	#task specific variables	
 	File BamFile
 	File BaitIntervals
 	File TargetIntervals
