@@ -1,7 +1,12 @@
 import "/home/mobidic/Devs/wdlDev/modules/fastqc.wdl" as runFastqc
 import "/home/mobidic/Devs/wdlDev/modules/bwaSamtools.wdl" as runBwaSamtools
 import "/home/mobidic/Devs/wdlDev/modules/sambambaIndex.wdl" as runSambambaIndex
-import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
+import "/home/mobidic/Devs/wdlDev/modules/gatkCollectMultipleMetrics.wdl" as runGatkCollectMultipleMetrics
+#import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
+import "/home/mobidic/Devs/wdlDev/modules/gatkBedToPicardIntervalList.wdl" as runGatkBedToPicardIntervalList
+#import "/home/mobidic/Devs/wdlDev/modules/gatkDepthOfCoverage.wdl" as runGatkDepthOfCoverage
+import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCollectHsMetrics
+
 
 workflow wgs {
 	#global
@@ -12,17 +17,21 @@ workflow wgs {
 	String suffix1
 	String suffix2
 	File fastqR1
-	File fastqR2	
+	File fastqR2
+	String genomeVersion
 	File refFasta
 	File refFai
 	Boolean isIntervalBedFile
 	File intervalBedFile
-	#execs
+	#bioinfo execs
 	String samtoolsExe
 	String sambambaExe
 	String bedToolsExe
+	#standard execs
 	String awkExe
 	String sortExe
+	String javaRam
+	String gatkExe
 	#fastqc	
 	String fastqcExe
 	String outDir
@@ -35,7 +44,10 @@ workflow wgs {
 	File refPac
 	File refSa
 	#computePoorCoverage
-
+	Int bedtoolsLowCoverage
+	Int bedToolsSmallInterval
+	#gatk-picard
+	File refDict
 
 	call runFastqc.fastqc {
 		input:
@@ -77,27 +89,72 @@ workflow wgs {
 		SambambaExe = sambambaExe,
 		BamFile = bwaSamtools.sortedBam
 	}
+	#call runGatkCollectAlignmentSummaryMetrics.gatkCollectAlignmentSummaryMetrics {
+	#	input:
+	#	SrunLow = srunLow,
+	#	SampleID = sampleID,
+	#	OutDir = outDir,
+	#	GatkExe = gatkExe,
+	#	RefFasta = refFasta,
+	#	BamFile = bwaSamtools.sortedBam
+	#}
+	call runGatkCollectMultipleMetrics.gatkCollectMultipleMetrics {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		GatkExe = gatkExe,
+		RefFasta = refFasta,
+		BamFile = bwaSamtools.sortedBam
+	}
 	if (isIntervalBedFile) {
-		call runComputePoorCoverage.computePoorCoverage {
+		call runGatkBedToPicardIntervalList.gatkBedToPicardIntervalList {
 			input:
 			SrunLow = srunLow,
 			SampleID = sampleID,
 			OutDir = outDir,
-			GenomeVersion = genomeVersion,
-			BedToolsExe = bedToolsExe,
 			IntervalBedFile = intervalBedFile,
-			BedtoolsLowCoverage = bedtoolsLowCoverage,
-			BedToolsSmallInterval = bedToolsSmallInterval,
-			BamFile = bwaSamtools.sortedBam
+			RefDict = refDict,
+			GatkExe = gatkExe
 		}
-		call collectHsMetrics {
-
-		}
-#		call collectInsertSizeMetrics {
+#		call runComputePoorCoverage.computePoorCoverage {#is not validated with womtool
+#			input:
+#			SrunLow = srunLow,
+#			SampleID = sampleID,
+#			OutDir = outDir,
+#			GenomeVersion = genomeVersion,
+#			BedToolsExe = bedToolsExe,
+#			AwkExe = awkExe,
+#			SortExe = sortExe,
+#			IntervalBedFile = intervalBedFile,
+#			BedtoolsLowCoverage = bedtoolsLowCoverage,
+#			BedToolsSmallInterval = bedToolsSmallInterval,
+#			BamFile = bwaSamtools.sortedBam
+#		}
+#		call runGatkDepthOfCoverage.gatkDepthOfCoverage {
+#			input:TOBEFINISHED
+#			SrunLow = srunLow,
+#			SampleID = sampleID,
+#			OutDir = outDir,
+#			JavaExe = javaExe,
+#			JavaRam = javaRam,
+#			GatkExe = gatkExe,
+#			RefFasta = refFasta,
 #
 #		}
+		call runGatkCollectHsMetrics.gatkCollectHsMetrics {
+			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			GatkExe = gatkExe,
+			RefFasta = refFasta,
+			BamFile = bwaSamtools.sortedBam,
+			BaitIntervals = gatkBedToPicardIntervalList.picardIntervals
+			TargetIntervals = gatkBedToPicardIntervalList.picardIntervals
+		}
 	}
-#	call haplotypeCallerERC {
-#
+#	call haplotypeCaller {
+#		#to be scattered-gathered see picard splitintervals then pass haplotypecaller an Array[File] 
 #	}
 }

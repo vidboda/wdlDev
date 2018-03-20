@@ -19,6 +19,16 @@
   "wgs.platform": "ILLUMINA",
   "wgs.srunLow": "",
   "wgs.fastqR1": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R1.fastq.gz",
-  "wgs.sambambaExe" : "/usr/local/bin/sambamba"
-  "wgs.bedToolsExe" : "/usr/local/bin/bedtools"
+  "wgs.sambambaExe" : "/usr/local/bin/sambamba",
+  "wgs.bedToolsExe" : "/usr/local/bin/bedtools",
+  "wgs.genomeVersion" : "hg19",
+  "wgs.intervalBedFile" : "/home/mobidic/Devs/wdlDev/test_input/Intervals.bed",
+  "wgs.isIntervalBedFile" : "true",
+  "wgs.awkExe" : "/usr/bin/awk",
+  "wgs.sortExe" : "/usr/bin/sort",
+  "wgs.bedtoolsLowCoverage" : "20",
+  "wgs.bedToolsSmallInterval" : "20",
+  "wgs.javaRam" : "6",
+  "wgs.gatkExe" : "/usr/local/bin/gatk",
+  "wgs.refDict": "/usr/local/share/refData/genome/hg19/hg19.dict"
 }
