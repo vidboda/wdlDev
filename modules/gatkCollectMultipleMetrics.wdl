@@ -1,4 +1,5 @@
 task gatkCollectMultipleMetrics {
+	#https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_analysis_CollectMultipleMetrics.php
 	#global variables
 	String SrunLow
 	String SampleID

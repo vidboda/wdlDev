@@ -1,4 +1,5 @@
 task gatkBedToPicardIntervalList {
+	#https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_util_BedToIntervalList.php
 	#global variables
 	String SrunLow
 	String SampleID

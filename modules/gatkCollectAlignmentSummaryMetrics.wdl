@@ -1,4 +1,6 @@
 task gatkCollectAlignmentSummaryMetrics {
+	#https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_analysis_CollectAlignmentSummaryMetrics.php
+	#global variables
 	String SrunLow
 	String SampleID
 	String OutDir

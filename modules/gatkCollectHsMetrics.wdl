@@ -1,4 +1,6 @@
 task gatkCollectHsMetrics {
+	#https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_analysis_directed_CollectHsMetrics.php
+	#global variables
 	String SrunLow
 	String SampleID
 	String OutDir
@@ -18,6 +20,6 @@ task gatkCollectHsMetrics {
 		--TARGET_INTERVALS ${TargetIntervals}
 	}
 	output {
-		File alignmentSummary = "${OutDir}${SampleID}/PicardQualityDir/${SampleID}_alignment_summary.txt"
+		File hsMetricsTxt = "${OutDir}${SampleID}/PicardQualityDir/${SampleID}_hs_metrics.txt"
 	}
 }
