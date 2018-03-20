@@ -30,5 +30,6 @@
   "wgs.bedToolsSmallInterval" : "20",
   "wgs.javaRam" : "6",
   "wgs.gatkExe" : "/usr/local/bin/gatk",
-  "wgs.refDict": "/usr/local/share/refData/genome/hg19/hg19.dict"
+  "wgs.refDict": "/usr/local/share/refData/genome/hg19/hg19.dict",
+  "wgs.workflowType": "wgs"
 }

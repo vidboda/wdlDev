@@ -4,18 +4,19 @@ task gatkCollectAlignmentSummaryMetrics {
 	String SrunLow
 	String SampleID
 	String OutDir
+	String WorkflowType
 	String GatkExe
 	File RefFasta
 	#task specific variables
 	File BamFile
 	command {
-		mkdir "${OutDir}${SampleID}/PicardQualityDir"
+		mkdir "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir"
 		${SrunLow} ${GatkExe} CollectAlignmentSummaryMetrics \
 		-R ${RefFasta} \
 		-I ${BamFile} \
-		-O "${OutDir}${SampleID}/PicardQualityDir/${SampleID}_alignment_summary.txt"
+		-O "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir/${SampleID}_alignment_summary.txt"
 	}
 	output {
-		File alignmentSummary = "${OutDir}${SampleID}/PicardQualityDir/${SampleID}_alignment_summary.txt"
+		File alignmentSummary = "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir/${SampleID}_alignment_summary.txt"
 	}
 }

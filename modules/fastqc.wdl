@@ -4,6 +4,7 @@ task fastqc {
 	Int Threads	
 	String SampleID
 	String OutDir
+	String WorkflowType
 	File FastqR1
 	File FastqR2
 	#task specific variables
@@ -11,17 +12,18 @@ task fastqc {
 	String Suffix2
 	String FastqcExe	
 	command {
-		mkdir ${OutDir}${SampleID}
-		mkdir "${OutDir}${SampleID}/FastqcDir"
+		mkdir "${OutDir}${SampleID}"
+		mkdir "${OutDir}${SampleID}/${WorkflowType}"
+		mkdir "${OutDir}${SampleID}/${WorkflowType}/FastqcDir"
 		${SrunHigh} ${FastqcExe} --threads ${Threads} \
 		${FastqR1} \
 		${FastqR2} \
-		-o "${OutDir}${SampleID}/FastqcDir"
+		-o "${OutDir}${SampleID}/${WorkflowType}/FastqcDir"
 	}
 	output {
-		File fastqcZipR1 = "${OutDir}${SampleID}/FastqcDir/${SampleID}${Suffix1}_fastqc.zip"
-		File fastqcHtmlR1 = "${OutDir}${SampleID}/FastqcDir/${SampleID}${Suffix1}_fastqc.html"
-		File fastqcZipR2 = "${OutDir}${SampleID}/FastqcDir/${SampleID}${Suffix2}_fastqc.zip"
-		File fastqcHtmlR2 = "${OutDir}${SampleID}/FastqcDir/${SampleID}${Suffix2}_fastqc.html"
+		File fastqcZipR1 = "${OutDir}${SampleID}/${WorkflowType}/FastqcDir/${SampleID}${Suffix1}_fastqc.zip"
+		File fastqcHtmlR1 = "${OutDir}${SampleID}/${WorkflowType}/FastqcDir/${SampleID}${Suffix1}_fastqc.html"
+		File fastqcZipR2 = "${OutDir}${SampleID}/${WorkflowType}/FastqcDir/${SampleID}${Suffix2}_fastqc.zip"
+		File fastqcHtmlR2 = "${OutDir}${SampleID}/${WorkflowType}/FastqcDir/${SampleID}${Suffix2}_fastqc.html"
 	}
 }

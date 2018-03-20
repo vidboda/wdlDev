@@ -4,6 +4,7 @@ task gatkCollectHsMetrics {
 	String SrunLow
 	String SampleID
 	String OutDir
+	String WorkflowType
 	String GatkExe
 	File RefFasta
 	File RefFai
@@ -12,15 +13,15 @@ task gatkCollectHsMetrics {
 	File BaitIntervals
 	File TargetIntervals
 	command {
-		mkdir "${OutDir}${SampleID}/PicardQualityDir"
+		mkdir "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir"
 		${SrunLow} ${GatkExe} CollectHsMetrics \
 		-R ${RefFasta} \
 		-I ${BamFile} \
-		-O "${OutDir}${SampleID}/PicardQualityDir/${SampleID}_hs_metrics.txt" \
+		-O "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir/${SampleID}_hs_metrics.txt" \
 		--BAIT_INTERVALS ${BaitIntervals} \
 		--TARGET_INTERVALS ${TargetIntervals}
 	}
 	output {
-		File hsMetricsTxt = "${OutDir}${SampleID}/PicardQualityDir/${SampleID}_hs_metrics.txt"
+		File hsMetricsTxt = "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir/${SampleID}_hs_metrics.txt"
 	}
 }

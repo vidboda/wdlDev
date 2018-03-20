@@ -2,7 +2,7 @@ import "/home/mobidic/Devs/wdlDev/modules/fastqc.wdl" as runFastqc
 import "/home/mobidic/Devs/wdlDev/modules/bwaSamtools.wdl" as runBwaSamtools
 import "/home/mobidic/Devs/wdlDev/modules/sambambaIndex.wdl" as runSambambaIndex
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectMultipleMetrics.wdl" as runGatkCollectMultipleMetrics
-#import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
+import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkBedToPicardIntervalList.wdl" as runGatkBedToPicardIntervalList
 #import "/home/mobidic/Devs/wdlDev/modules/gatkDepthOfCoverage.wdl" as runGatkDepthOfCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCollectHsMetrics
@@ -23,6 +23,7 @@ workflow wgs {
 	File refFai
 	Boolean isIntervalBedFile
 	File intervalBedFile
+	String workflowType
 	#bioinfo execs
 	String samtoolsExe
 	String sambambaExe
@@ -59,14 +60,16 @@ workflow wgs {
 		FastqR1 = fastqR1,
 		FastqR2 = fastqR2,
 		FastqcExe = fastqcExe,
-		OutDir = outDir
+		OutDir = outDir,
+		WorkflowType = workflowType
 	}
 	call runBwaSamtools.bwaSamtools {
 		input: 
 		SrunHigh = srunHigh,
 		Threads = threads,
 		SampleID = sampleID,
-		OutDir = outDir,		
+		OutDir = outDir,
+		WorkflowType = workflowType,
 		FastqR1 = fastqR1,
 		FastqR2 = fastqR2,
 		SamtoolsExe = samtoolsExe,
@@ -86,23 +89,16 @@ workflow wgs {
 		Threads = threads,
 		SampleID = sampleID,
 		OutDir = outDir,
+		WorkflowType = workflowType,
 		SambambaExe = sambambaExe,
 		BamFile = bwaSamtools.sortedBam
 	}
-	#call runGatkCollectAlignmentSummaryMetrics.gatkCollectAlignmentSummaryMetrics {
-	#	input:
-	#	SrunLow = srunLow,
-	#	SampleID = sampleID,
-	#	OutDir = outDir,
-	#	GatkExe = gatkExe,
-	#	RefFasta = refFasta,
-	#	BamFile = bwaSamtools.sortedBam
-	#}
 	call runGatkCollectMultipleMetrics.gatkCollectMultipleMetrics {
 		input:
 		SrunLow = srunLow,
 		SampleID = sampleID,
 		OutDir = outDir,
+		WorkflowType = workflowType,
 		GatkExe = gatkExe,
 		RefFasta = refFasta,
 		BamFile = bwaSamtools.sortedBam
@@ -113,26 +109,28 @@ workflow wgs {
 			SrunLow = srunLow,
 			SampleID = sampleID,
 			OutDir = outDir,
+			WorkflowType = workflowType,
 			IntervalBedFile = intervalBedFile,
 			RefDict = refDict,
 			GatkExe = gatkExe
 		}
-#		call runComputePoorCoverage.computePoorCoverage {#is not validated with womtool
-#			input:
-#			SrunLow = srunLow,
-#			SampleID = sampleID,
-#			OutDir = outDir,
-#			GenomeVersion = genomeVersion,
-#			BedToolsExe = bedToolsExe,
-#			AwkExe = awkExe,
-#			SortExe = sortExe,
-#			IntervalBedFile = intervalBedFile,
-#			BedtoolsLowCoverage = bedtoolsLowCoverage,
-#			BedToolsSmallInterval = bedToolsSmallInterval,
-#			BamFile = bwaSamtools.sortedBam
-#		}
+		call runComputePoorCoverage.computePoorCoverage {
+			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			WorkflowType = workflowType,
+			GenomeVersion = genomeVersion,
+			BedToolsExe = bedToolsExe,
+			AwkExe = awkExe,
+			SortExe = sortExe,
+			IntervalBedFile = intervalBedFile,
+			BedtoolsLowCoverage = bedtoolsLowCoverage,
+			BedToolsSmallInterval = bedToolsSmallInterval,
+			BamFile = bwaSamtools.sortedBam
+		}
 #		call runGatkDepthOfCoverage.gatkDepthOfCoverage {
-#			input:TOBEFINISHED
+#			input:TOBEFINISHED - not implemented yet in gatk4 - must use GATK3
 #			SrunLow = srunLow,
 #			SampleID = sampleID,
 #			OutDir = outDir,
@@ -147,6 +145,7 @@ workflow wgs {
 			SrunLow = srunLow,
 			SampleID = sampleID,
 			OutDir = outDir,
+			WorkflowType = workflowType,
 			GatkExe = gatkExe,
 			RefFasta = refFasta,
 			RefFai = refFai,
@@ -156,6 +155,6 @@ workflow wgs {
 		}
 	}
 #	call haplotypeCaller {
-#		#to be scattered-gathered see picard splitintervals then pass haplotypecaller an Array[File] 
+#		#to be scattered-gathered see picard splitintervals then pass haplotypecaller an Array[File] - globbed 
 #	}
 }
