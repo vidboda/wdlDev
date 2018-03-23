@@ -1,9 +1,16 @@
 import "/home/mobidic/Devs/wdlDev/modules/fastqc.wdl" as runFastqc
 import "/home/mobidic/Devs/wdlDev/modules/bwaSamtools.wdl" as runBwaSamtools
 import "/home/mobidic/Devs/wdlDev/modules/sambambaIndex.wdl" as runSambambaIndex
+import "/home/mobidic/Devs/wdlDev/modules/sambambaMarkDup.wdl" as runSambambaMarkDup
+import "/home/mobidic/Devs/wdlDev/modules/bedToGatkIntervalList.wdl" as runBedToGatkIntervalList
+import "/home/mobidic/Devs/wdlDev/modules/gatkSplitIntervals.wdl" as runGatkSplitIntervals
+import "/home/mobidic/Devs/wdlDev/modules/gatkBaseRecalibrator.wdl" as runGatkBaseRecalibrator
+import "/home/mobidic/Devs/wdlDev/modules/sambambaFlagStat.wdl" as runSambambaFlagStat
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectMultipleMetrics.wdl" as runGatkCollectMultipleMetrics
-import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
+import "/home/mobidic/Devs/wdlDev/modules/collectWgsMetricsWithNonZeroCoverage.wdl" as runCollectWgsMetricsWithNonZeroCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkBedToPicardIntervalList.wdl" as runGatkBedToPicardIntervalList
+import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
+
 #import "/home/mobidic/Devs/wdlDev/modules/gatkDepthOfCoverage.wdl" as runGatkDepthOfCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCollectHsMetrics
 
@@ -49,6 +56,15 @@ workflow wgs {
 	Int bedToolsSmallInterval
 	#gatk-picard
 	File refDict
+	#gatk splitintervals
+	String subdivisionMode
+	#gatk Base recal
+	File knownSites1
+	File knownSites1Index
+	File knownSites2
+	File knownSites2Index
+	File knownSites3
+	File knownSites3Index
 
 	call runFastqc.fastqc {
 		input:
@@ -93,6 +109,73 @@ workflow wgs {
 		SambambaExe = sambambaExe,
 		BamFile = bwaSamtools.sortedBam
 	}
+	call runSambambaMarkDup.sambambaMarkDup {
+		input:
+		SrunHigh = srunHigh,
+		Threads = threads,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		SambambaExe = sambambaExe,
+		BamFile = bwaSamtools.sortedBam
+	}
+	call runBedToGatkIntervalList.bedToGatkIntervalList {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		IntervalBedFile = intervalBedFile,
+		AwkExe = awkExe
+	}
+	call runGatkSplitIntervals.gatkSplitIntervals {
+		input:
+		SrunLow = srunLow,
+		Threads = threads,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		RefFasta = refFasta,
+		RefFai = refFai,
+		RefDict = refDict,
+		GatkInterval = bedToGatkIntervalList.gatkIntervals,
+		SubdivisionMode = subdivisionMode
+	}
+	scatter (interval in gatkSplitIntervals.splittedIntervals) {
+		call runGatkBaseRecalibrator.gatkBaseRecalibrator {
+			input:
+			SrunLow = srunLow,
+			Threads = threads,
+			SampleID = sampleID,
+			OutDir = outDir,
+			WorkflowType = workflowType,
+			GatkExe = gatkExe,
+			RefFasta = refFasta,
+			RefFai = refFai,
+			RefDict = refDict,
+			GatkInterval = interval,
+			BamFile = sambambaMarkDup.markedBam,
+			BamIndex = sambambaMarkDup.markedBamIndex,
+			KnownSites1 = knownSites1,
+			KnownSites1Index = knownSites1Index,
+			KnownSites2 = knownSites2,
+			KnownSites2Index = knownSites2Index,
+			KnownSites3 = knownSites3,
+			KnownSites3Index = knownSites3Index,
+		}
+	}
+	
+	call runSambambaFlagStat.sambambaFlagStat {
+		input:
+		SrunHigh = srunHigh,
+		Threads = threads,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		SambambaExe = sambambaExe,		
+		BamFile = sambambaMarkDup.markedBam
+	}
 	call runGatkCollectMultipleMetrics.gatkCollectMultipleMetrics {
 		input:
 		SrunLow = srunLow,
@@ -101,8 +184,18 @@ workflow wgs {
 		WorkflowType = workflowType,
 		GatkExe = gatkExe,
 		RefFasta = refFasta,
-		BamFile = bwaSamtools.sortedBam
+		BamFile = sambambaMarkDup.markedBam
 	}
+#	call runCollectWgsMetricsWithNonZeroCoverage.collectWgsMetricsWithNonZeroCoverage {#too long
+#		input:
+#		SrunLow = srunLow,
+#		SampleID = sampleID,
+#		OutDir = outDir,
+#		WorkflowType = workflowType,
+#		GatkExe = gatkExe,
+#		RefFasta = refFasta,
+#		BamFile = sambambaMarkDup.markedBam
+#	}
 	if (isIntervalBedFile) {
 		call runGatkBedToPicardIntervalList.gatkBedToPicardIntervalList {
 			input:
@@ -127,7 +220,7 @@ workflow wgs {
 			IntervalBedFile = intervalBedFile,
 			BedtoolsLowCoverage = bedtoolsLowCoverage,
 			BedToolsSmallInterval = bedToolsSmallInterval,
-			BamFile = bwaSamtools.sortedBam
+			BamFile = sambambaMarkDup.markedBam
 		}
 #		call runGatkDepthOfCoverage.gatkDepthOfCoverage {
 #			input:TOBEFINISHED - not implemented yet in gatk4 - must use GATK3
@@ -149,11 +242,12 @@ workflow wgs {
 			GatkExe = gatkExe,
 			RefFasta = refFasta,
 			RefFai = refFai,
-			BamFile = bwaSamtools.sortedBam,
+			BamFile = sambambaMarkDup.markedBam,
 			BaitIntervals = gatkBedToPicardIntervalList.picardIntervals,
 			TargetIntervals = gatkBedToPicardIntervalList.picardIntervals
 		}
 	}
+
 #	call haplotypeCaller {
 #		#to be scattered-gathered see picard splitintervals then pass haplotypecaller an Array[File] - globbed 
 #	}

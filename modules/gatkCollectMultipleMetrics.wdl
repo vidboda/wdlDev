@@ -11,7 +11,8 @@ task gatkCollectMultipleMetrics {
 	File BamFile
 	command {
 		mkdir "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir"
-		${SrunLow} ${GatkExe} CollectMultipleMetrics -I ${BamFile} \
+		${SrunLow} ${GatkExe} CollectMultipleMetrics \
+		-I ${BamFile} \
 		-R ${RefFasta} \
 		-O "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir/${SampleID}_multiple_metrics" \
 		--PROGRAM CollectAlignmentSummaryMetrics \

@@ -11,7 +11,7 @@
   "wgs.fastqcExe": "/usr/local/bin/fastqc",
   "wgs.srunHigh": "",
   "wgs.refSa": "/usr/local/share/refData/genome/hg19/hg19.fa.sa",
-  "wgs.threads": "4",
+  "wgs.threads": "2",
   "wgs.refAmb": "/usr/local/share/refData/genome/hg19/hg19.fa.amb",
   "wgs.fastqR2": "/home/mobidic/Devs/wdlDev/test_input/MiniFastqTest_R2.fastq.gz",
   "wgs.outDir": "/home/mobidic/Devs/wdlDev/test_output/",
@@ -31,5 +31,12 @@
   "wgs.javaRam" : "6",
   "wgs.gatkExe" : "/usr/local/bin/gatk",
   "wgs.refDict": "/usr/local/share/refData/genome/hg19/hg19.dict",
-  "wgs.workflowType": "wgs"
+  "wgs.workflowType": "wgs",
+  "wgs.subdivisionMode": "BALANCING_WITHOUT_INTERVAL_SUBDIVISION",
+  "wgs.knownSites1": "/usr/local/share/refData/indelReference/hg19/1000G_phase1.indels.hg19.sites.vcf.gz",
+   "wgs.knownSites1Index": "/usr/local/share/refData/indelReference/hg19/1000G_phase1.indels.hg19.sites.vcf.gz.tbi",
+  "wgs.knownSites2": "/usr/local/share/refData/indelReference/hg19/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf.gz",
+  "wgs.knownSites2Index": "/usr/local/share/refData/indelReference/hg19/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf.gz.tbi",
+  "wgs.knownSites3": "/usr/local/share/refData/dbSNP/138/CORRECT_dbsnp_138.hg19.vcf.gz",
+  "wgs.knownSites3Index": "/usr/local/share/refData/dbSNP/138/CORRECT_dbsnp_138.hg19.vcf.gz.tbi"
 }
