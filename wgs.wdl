@@ -20,6 +20,7 @@ import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCo
 import "/home/mobidic/Devs/wdlDev/modules/gatkHaplotypeCaller.wdl" as runGatkHaplotypeCaller
 import "/home/mobidic/Devs/wdlDev/modules/gatkGatherVcfs.wdl" as runGatkGatherVcfs
 
+import "/home/mobidic/Devs/wdlDev/modules/cleanUpWgsTmpDirs.wdl" as runCleanUpWgsTmpDirs
 
 workflow wgs {
 	#global
@@ -365,4 +366,15 @@ workflow wgs {
 		HcVcfs = hcVcfs
 	}
 	
+
+
+	call runCleanUpWgsTmpDirs.cleanUpWgsTmpDirs {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType
+	}
+
+
 }
