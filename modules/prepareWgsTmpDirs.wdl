@@ -12,6 +12,7 @@ task prepareWgsTmpDirs {
 		mkdir "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals"
 		mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_tables"
 		mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_bams"
+		mkdir "${OutDir}${SampleID}/${WorkflowType}/qualimap"
 		mkdir "${OutDir}${SampleID}/${WorkflowType}/vcfs"
 	}
 }

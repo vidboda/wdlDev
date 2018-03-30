@@ -19,6 +19,9 @@ import "/home/mobidic/Devs/wdlDev/modules/computeCoverage.wdl" as runComputeCove
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCollectHsMetrics
 import "/home/mobidic/Devs/wdlDev/modules/gatkHaplotypeCaller.wdl" as runGatkHaplotypeCaller
 import "/home/mobidic/Devs/wdlDev/modules/gatkGatherVcfs.wdl" as runGatkGatherVcfs
+import "/home/mobidic/Devs/wdlDev/modules/qualimapBamQc.wdl" as runQualimapBamQc
+
+
 
 import "/home/mobidic/Devs/wdlDev/modules/cleanUpWgsTmpDirs.wdl" as runCleanUpWgsTmpDirs
 
@@ -42,6 +45,7 @@ workflow wgs {
 	String samtoolsExe
 	String sambambaExe
 	String bedToolsExe
+	String qualimapExe
 	#standard execs
 	String awkExe
 	String sortExe
@@ -270,6 +274,18 @@ workflow wgs {
 		GatkExe = gatkExe,
 		RefFasta = refFasta,
 		BamFile = gatkGatherBamFiles.finalBam
+	}
+	call runQualimapBamQc.qualimapBamQc {
+		input:
+		SrunHigh = srunHigh,
+		Threads = threads,
+		JavaRam = javaRam,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		QualimapExe = qualimapExe,
+		BamFile = gatkGatherBamFiles.finalBam,
+		IntervalBedFile = intervalBedFile,
 	}
 #	call runCollectWgsMetricsWithNonZeroCoverage.collectWgsMetricsWithNonZeroCoverage {#too long
 #		input:
