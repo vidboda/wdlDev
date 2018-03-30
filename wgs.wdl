@@ -1,3 +1,4 @@
+import "/home/mobidic/Devs/wdlDev/modules/prepareWgsTmpDirs.wdl" as runPrepareWgsTmpDirs
 import "/home/mobidic/Devs/wdlDev/modules/fastqc.wdl" as runFastqc
 import "/home/mobidic/Devs/wdlDev/modules/bwaSamtools.wdl" as runBwaSamtools
 import "/home/mobidic/Devs/wdlDev/modules/sambambaIndex.wdl" as runSambambaIndex
@@ -78,7 +79,13 @@ workflow wgs {
 	#haplotypeCaller
 	String swMode
 
-
+	call runPrepareWgsTmpDirs.prepareWgsTmpDirs {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType
+	}
 	call runFastqc.fastqc {
 		input:
 		SrunHigh = srunHigh,

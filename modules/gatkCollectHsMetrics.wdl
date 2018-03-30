@@ -13,7 +13,6 @@ task gatkCollectHsMetrics {
 	File BaitIntervals
 	File TargetIntervals
 	command {
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir"
 		${SrunLow} ${GatkExe} CollectHsMetrics \
 		-R ${RefFasta} \
 		-I ${BamFile} \

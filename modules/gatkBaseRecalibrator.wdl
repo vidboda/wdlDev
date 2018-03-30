@@ -20,8 +20,6 @@ task gatkBaseRecalibrator {
 	File KnownSites3Index
 	String intervalName = basename("${GatkInterval}", ".intervals")
 	command {
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_tables"
-
 		${SrunLow} ${GatkExe} BaseRecalibrator \
 		-R ${RefFasta} \
 		-I ${BamFile} \

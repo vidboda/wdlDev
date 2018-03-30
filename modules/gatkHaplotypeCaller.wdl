@@ -17,8 +17,6 @@ task gatkHaplotypeCaller {
 	File BamIndex
 	String SwMode
 	command {
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/vcfs"
-
 		${SrunLow} ${GatkExe} HaplotypeCaller \
 		-R ${RefFasta} \
 		-I ${BamFile} \

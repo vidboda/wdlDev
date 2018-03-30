@@ -14,7 +14,6 @@ task gatkSplitIntervals {
 	File GatkInterval
 	String SubdivisionMode
 	command {
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals"
 		${SrunLow} ${GatkExe} SplitIntervals \
 		-R ${RefFasta} \
 		-L ${GatkInterval} \

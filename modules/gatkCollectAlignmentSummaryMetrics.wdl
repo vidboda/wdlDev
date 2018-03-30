@@ -10,7 +10,6 @@ task gatkCollectAlignmentSummaryMetrics {
 	#task specific variables
 	File BamFile
 	command {
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir"
 		${SrunLow} ${GatkExe} CollectAlignmentSummaryMetrics \
 		-R ${RefFasta} \
 		-I ${BamFile} \

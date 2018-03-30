@@ -13,7 +13,6 @@ task gatkLeftAlignIndels {
 	File GatkInterval
 	String intervalName = basename("${GatkInterval}", ".intervals")
 	command {
-
 			${SrunLow} ${GatkExe} LeftAlignIndels \
 			-R ${RefFasta} \
 			-I ${BamFile} \

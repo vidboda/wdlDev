@@ -15,8 +15,6 @@ task gatkApplyBQSR {
 	String intervalName = basename("${GatkInterval}", ".intervals")
 	File GatheredRecaltable
 	command {
-			mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_bams"
-
 			${SrunLow} ${GatkExe} ApplyBQSR \
 			-R ${RefFasta} \
 			-I ${BamFile} \

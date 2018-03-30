@@ -10,7 +10,6 @@ task gatkCollectMultipleMetrics {
 	#task specific variables
 	File BamFile
 	command {
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir"
 		${SrunLow} ${GatkExe} CollectMultipleMetrics \
 		-I ${BamFile} \
 		-R ${RefFasta} \

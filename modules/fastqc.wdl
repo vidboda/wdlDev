@@ -12,9 +12,6 @@ task fastqc {
 	String Suffix2
 	String FastqcExe	
 	command {
-		mkdir "${OutDir}${SampleID}"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/FastqcDir"
 		${SrunHigh} ${FastqcExe} --threads ${Threads} \
 		${FastqR1} \
 		${FastqR2} \
