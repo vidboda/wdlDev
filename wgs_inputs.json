@@ -38,5 +38,9 @@
   "wgs.knownSites2": "/usr/local/share/refData/indelReference/hg19/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf.gz",
   "wgs.knownSites2Index": "/usr/local/share/refData/indelReference/hg19/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf.gz.tbi",
   "wgs.knownSites3": "/usr/local/share/refData/dbSNP/138/CORRECT_dbsnp_138.hg19.vcf.gz",
-  "wgs.knownSites3Index": "/usr/local/share/refData/dbSNP/138/CORRECT_dbsnp_138.hg19.vcf.gz.tbi"
+  "wgs.knownSites3Index": "/usr/local/share/refData/dbSNP/138/CORRECT_dbsnp_138.hg19.vcf.gz.tbi",
+  "wgs.minCovBamQual": "30",
+  "wgs.suffixIndex": "",
+  "wgs.suffixIndex2": ".dupmarked.recal.laligned",
+  "wgs.swMode": "FASTEST_AVAILABLE"
 }
