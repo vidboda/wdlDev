@@ -5,13 +5,15 @@ import "/home/mobidic/Devs/wdlDev/modules/sambambaMarkDup.wdl" as runSambambaMar
 import "/home/mobidic/Devs/wdlDev/modules/bedToGatkIntervalList.wdl" as runBedToGatkIntervalList
 import "/home/mobidic/Devs/wdlDev/modules/gatkSplitIntervals.wdl" as runGatkSplitIntervals
 import "/home/mobidic/Devs/wdlDev/modules/gatkBaseRecalibrator.wdl" as runGatkBaseRecalibrator
+import "/home/mobidic/Devs/wdlDev/modules/gatkGatherBQSRReports.wdl" as runGatkGatherBQSRReports
+import "/home/mobidic/Devs/wdlDev/modules/gatkApplyBQSR.wdl" as runGatkApplyBQSR
+import "/home/mobidic/Devs/wdlDev/modules/gatkLeftAlignIndels.wdl" as runGatkLeftAlignIndels
+import "/home/mobidic/Devs/wdlDev/modules/gatkGatherBamFiles.wdl" as runGatkGatherBamFiles
 import "/home/mobidic/Devs/wdlDev/modules/sambambaFlagStat.wdl" as runSambambaFlagStat
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectMultipleMetrics.wdl" as runGatkCollectMultipleMetrics
-import "/home/mobidic/Devs/wdlDev/modules/collectWgsMetricsWithNonZeroCoverage.wdl" as runCollectWgsMetricsWithNonZeroCoverage
+#import "/home/mobidic/Devs/wdlDev/modules/collectWgsMetricsWithNonZeroCoverage.wdl" as runCollectWgsMetricsWithNonZeroCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkBedToPicardIntervalList.wdl" as runGatkBedToPicardIntervalList
 import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
-
-#import "/home/mobidic/Devs/wdlDev/modules/gatkDepthOfCoverage.wdl" as runGatkDepthOfCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCollectHsMetrics
 
 
@@ -165,7 +167,60 @@ workflow wgs {
 			KnownSites3Index = knownSites3Index,
 		}
 	}
-	
+	output {
+			Array[File] recalTables = gatkBaseRecalibrator.recalTable
+	}
+	call runGatkGatherBQSRReports.gatkGatherBQSRReports {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		RecalTables = recalTables
+	}
+	scatter (interval in gatkSplitIntervals.splittedIntervals) {
+		call runGatkApplyBQSR.gatkApplyBQSR {
+			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			WorkflowType = workflowType,
+			GatkExe = gatkExe,
+			RefFasta = refFasta,
+			RefFai = refFai,
+			RefDict = refDict,
+			GatkInterval = interval,
+			BamFile = sambambaMarkDup.markedBam,
+			BamIndex = sambambaMarkDup.markedBamIndex,
+			GatheredRecaltable = gatkGatherBQSRReports.gatheredRecalTable
+		}
+		call runGatkLeftAlignIndels.gatkLeftAlignIndels {
+			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			WorkflowType = workflowType,
+			GatkExe = gatkExe,
+			RefFasta = refFasta,
+			RefFai = refFai,
+			RefDict = refDict,
+			GatkInterval = interval,
+			BamFile = gatkApplyBQSR.recalBam
+		}
+	}
+	output {
+			Array[File] lAlignedBams = gatkLeftAlignIndels.lAlignedBam
+	}
+	call runGatkGatherBamFiles.gatkGatherBamFiles {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		LAlignedBams = lAlignedBams
+	}
 	call runSambambaFlagStat.sambambaFlagStat {
 		input:
 		SrunHigh = srunHigh,
@@ -174,7 +229,7 @@ workflow wgs {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		SambambaExe = sambambaExe,		
-		BamFile = sambambaMarkDup.markedBam
+		BamFile = gatkGatherBamFiles.finalBam
 	}
 	call runGatkCollectMultipleMetrics.gatkCollectMultipleMetrics {
 		input:
@@ -184,7 +239,7 @@ workflow wgs {
 		WorkflowType = workflowType,
 		GatkExe = gatkExe,
 		RefFasta = refFasta,
-		BamFile = sambambaMarkDup.markedBam
+		BamFile = gatkGatherBamFiles.finalBam
 	}
 #	call runCollectWgsMetricsWithNonZeroCoverage.collectWgsMetricsWithNonZeroCoverage {#too long
 #		input:
@@ -220,19 +275,8 @@ workflow wgs {
 			IntervalBedFile = intervalBedFile,
 			BedtoolsLowCoverage = bedtoolsLowCoverage,
 			BedToolsSmallInterval = bedToolsSmallInterval,
-			BamFile = sambambaMarkDup.markedBam
+			BamFile = gatkGatherBamFiles.finalBam
 		}
-#		call runGatkDepthOfCoverage.gatkDepthOfCoverage {
-#			input:TOBEFINISHED - not implemented yet in gatk4 - must use GATK3
-#			SrunLow = srunLow,
-#			SampleID = sampleID,
-#			OutDir = outDir,
-#			JavaExe = javaExe,
-#			JavaRam = javaRam,
-#			GatkExe = gatkExe,
-#			RefFasta = refFasta,
-#
-#		}
 		call runGatkCollectHsMetrics.gatkCollectHsMetrics {
 			input:
 			SrunLow = srunLow,
@@ -242,7 +286,7 @@ workflow wgs {
 			GatkExe = gatkExe,
 			RefFasta = refFasta,
 			RefFai = refFai,
-			BamFile = sambambaMarkDup.markedBam,
+			BamFile = gatkGatherBamFiles.finalBam,
 			BaitIntervals = gatkBedToPicardIntervalList.picardIntervals,
 			TargetIntervals = gatkBedToPicardIntervalList.picardIntervals
 		}

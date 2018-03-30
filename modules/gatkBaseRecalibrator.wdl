@@ -33,6 +33,6 @@ task gatkBaseRecalibrator {
 			-O "${OutDir}${SampleID}/${WorkflowType}/recal_tables/${SampleID}.recal_table.${intervalName}.txt"		
 	}
 	output {
-		File recallTable = "${OutDir}${SampleID}/${WorkflowType}/recal_tables/${SampleID}.recal_table.${intervalName}.txt"
+		File recalTable = "${OutDir}${SampleID}/${WorkflowType}/recal_tables/${SampleID}.recal_table.${intervalName}.txt"
 	}
 }
