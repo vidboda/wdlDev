@@ -14,7 +14,10 @@ import "/home/mobidic/Devs/wdlDev/modules/gatkCollectMultipleMetrics.wdl" as run
 #import "/home/mobidic/Devs/wdlDev/modules/collectWgsMetricsWithNonZeroCoverage.wdl" as runCollectWgsMetricsWithNonZeroCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkBedToPicardIntervalList.wdl" as runGatkBedToPicardIntervalList
 import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
+import "/home/mobidic/Devs/wdlDev/modules/computeCoverage.wdl" as runComputeCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCollectHsMetrics
+import "/home/mobidic/Devs/wdlDev/modules/gatkHaplotypeCaller.wdl" as runGatkHaplotypeCaller
+import "/home/mobidic/Devs/wdlDev/modules/gatkGatherVcfs.wdl" as runGatkGatherVcfs
 
 
 workflow wgs {
@@ -53,11 +56,9 @@ workflow wgs {
 	File refBwt
 	File refPac
 	File refSa
-	#computePoorCoverage
-	Int bedtoolsLowCoverage
-	Int bedToolsSmallInterval
-	#gatk-picard
-	File refDict
+	#sambambaIndex
+	String suffixIndex
+	String suffixIndex2
 	#gatk splitintervals
 	String subdivisionMode
 	#gatk Base recal
@@ -67,6 +68,16 @@ workflow wgs {
 	File knownSites2Index
 	File knownSites3
 	File knownSites3Index
+	#gatk-picard
+	File refDict
+	#computePoorCoverage
+	Int bedtoolsLowCoverage
+	Int bedToolsSmallInterval
+	#computeCoverage
+	Int minCovBamQual
+	#haplotypeCaller
+	String swMode
+
 
 	call runFastqc.fastqc {
 		input:
@@ -109,7 +120,8 @@ workflow wgs {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		SambambaExe = sambambaExe,
-		BamFile = bwaSamtools.sortedBam
+		BamFile = bwaSamtools.sortedBam,
+		SuffixIndex = suffixIndex
 	}
 	call runSambambaMarkDup.sambambaMarkDup {
 		input:
@@ -148,7 +160,6 @@ workflow wgs {
 		call runGatkBaseRecalibrator.gatkBaseRecalibrator {
 			input:
 			SrunLow = srunLow,
-			Threads = threads,
 			SampleID = sampleID,
 			OutDir = outDir,
 			WorkflowType = workflowType,
@@ -164,7 +175,7 @@ workflow wgs {
 			KnownSites2 = knownSites2,
 			KnownSites2Index = knownSites2Index,
 			KnownSites3 = knownSites3,
-			KnownSites3Index = knownSites3Index,
+			KnownSites3Index = knownSites3Index
 		}
 	}
 	output {
@@ -220,6 +231,17 @@ workflow wgs {
 		WorkflowType = workflowType,
 		GatkExe = gatkExe,
 		LAlignedBams = lAlignedBams
+	}
+	call runSambambaIndex.sambambaIndex as finalIndexing {
+		input:
+		SrunHigh = srunHigh,
+		Threads = threads,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		SambambaExe = sambambaExe,
+		BamFile = gatkGatherBamFiles.finalBam,
+		SuffixIndex = suffixIndex2
 	}
 	call runSambambaFlagStat.sambambaFlagStat {
 		input:
@@ -277,6 +299,19 @@ workflow wgs {
 			BedToolsSmallInterval = bedToolsSmallInterval,
 			BamFile = gatkGatherBamFiles.finalBam
 		}
+		call runComputeCoverage.computeCoverage {
+			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			WorkflowType = workflowType,
+			AwkExe = awkExe,
+			SortExe = sortExe,
+			SamtoolsExe = samtoolsExe,
+			IntervalBedFile = intervalBedFile,
+			BamFile = gatkGatherBamFiles.finalBam,
+			MinCovBamQual = minCovBamQual
+		}
 		call runGatkCollectHsMetrics.gatkCollectHsMetrics {
 			input:
 			SrunLow = srunLow,
@@ -291,8 +326,36 @@ workflow wgs {
 			TargetIntervals = gatkBedToPicardIntervalList.picardIntervals
 		}
 	}
-
-#	call haplotypeCaller {
-#		#to be scattered-gathered see picard splitintervals then pass haplotypecaller an Array[File] - globbed 
-#	}
+	scatter (interval in gatkSplitIntervals.splittedIntervals) {
+		call runGatkHaplotypeCaller.gatkHaplotypeCaller {
+			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			WorkflowType = workflowType,
+			GatkExe = gatkExe,
+			RefFasta = refFasta,
+			RefFai = refFai,
+			RefDict = refDict,
+			DbSNP = knownSites3,
+			DbSNPIndex = knownSites3Index,
+			GatkInterval = interval,
+			BamFile = gatkGatherBamFiles.finalBam,
+			BamIndex = finalIndexing.bamIndex,
+			SwMode = swMode
+		}
+	}
+	output {
+		Array[File] hcVcfs = gatkHaplotypeCaller.hcVcf
+	}
+	call runGatkGatherVcfs.gatkGatherVcfs {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		HcVcfs = hcVcfs
+	}
+	
 }
