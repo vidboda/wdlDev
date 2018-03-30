@@ -1,7 +1,6 @@
 task gatkBaseRecalibrator {
 	#global variables
 	String SrunLow
-	Int Threads
 	String SampleID	
 	String OutDir
 	String WorkflowType
@@ -21,16 +20,16 @@ task gatkBaseRecalibrator {
 	File KnownSites3Index
 	String intervalName = basename("${GatkInterval}", ".intervals")
 	command {
-			mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_tables"
+		mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_tables"
 
-			${SrunLow} ${GatkExe} BaseRecalibrator \
-			-R ${RefFasta} \
-			-I ${BamFile} \
-			-L ${GatkInterval} \
-			--known-sites ${KnownSites1} \
-			--known-sites ${KnownSites2} \
-			--known-sites ${KnownSites3} \
-			-O "${OutDir}${SampleID}/${WorkflowType}/recal_tables/${SampleID}.recal_table.${intervalName}.txt"		
+		${SrunLow} ${GatkExe} BaseRecalibrator \
+		-R ${RefFasta} \
+		-I ${BamFile} \
+		-L ${GatkInterval} \
+		--known-sites ${KnownSites1} \
+		--known-sites ${KnownSites2} \
+		--known-sites ${KnownSites3} \
+		-O "${OutDir}${SampleID}/${WorkflowType}/recal_tables/${SampleID}.recal_table.${intervalName}.txt"
 	}
 	output {
 		File recalTable = "${OutDir}${SampleID}/${WorkflowType}/recal_tables/${SampleID}.recal_table.${intervalName}.txt"
