@@ -8,12 +8,13 @@ task sambambaIndex {
 	String SambambaExe
 	#task specific variables
 	File BamFile
+	String SuffixIndex
 	command {
 		${SrunHigh} ${SambambaExe} index -t ${Threads} \
 		${BamFile} \
-		"${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
+		"${OutDir}${SampleID}/${WorkflowType}/${SampleID}${SuffixIndex}.bam.bai"
 	}
 	output {
-		File bamIndex = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
+		File bamIndex = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}${SuffixIndex}.bam.bai"
 	}
 }
