@@ -14,5 +14,6 @@ task gatkGatherVcfs {
 	}
 	output {
 		File gatheredHcVcf = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.vcf"
+		File gatheredHcVcfIndex = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.vcf.idx"
 	}
 }
