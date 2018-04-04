@@ -5,14 +5,32 @@ task prepareWgsTmpDirs {
 	String OutDir
 	String WorkflowType
 	command {
-		mkdir "${OutDir}${SampleID}"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/FastqcDir"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_tables"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_bams"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/qualimap"
-		mkdir "${OutDir}${SampleID}/${WorkflowType}/vcfs"
+		if [ ! -d "${OutDir}${SampleID}" ];then \
+			mkdir "${OutDir}${SampleID}"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/FastqcDir" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/FastqcDir"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/PicardQualityDir"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/recal_tables" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_tables"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/recal_bams" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/recal_bams"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/qualimap" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/qualimap"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/vcfs" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/vcfs"; \
+		fi
 	}
 }
