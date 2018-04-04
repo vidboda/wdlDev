@@ -30,5 +30,6 @@ task bwaSamtools {
 	}
 	output {
 		File sortedBam = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
+		#File sortedBamIndex = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
 	}
 }

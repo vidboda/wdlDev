@@ -5,20 +5,16 @@ task computeCoverage {
 	String WorkflowType
 	String AwkExe
 	String SortExe
-	String SamtoolsExe
 	#task specific variables
-	File IntervalBedFile
-	File BamFile
-	Int MinCovBamQual
+	File BedCovFile
 
 	command <<<
-		${SrunLow} ${SamtoolsExe} bedcov -Q ${MinCovBamQual} ${IntervalBedFile} ${BamFile} \
-		| ${SortExe} -k1,1 -k2,2n -k3,3n \
+		${SortExe} -k1,1 -k2,2n -k3,3n ${BedCovFile} \
 		| ${AwkExe}  'BEGIN {OFS="\t"}{a=($3-$2+1);b=($7/a);print $1,$2,$3,$4,b,"+"}' \
 		| ${AwkExe} 'BEGIN{FS=",.";OFS="\t"}{print $1,"+" }' \
 		> "${OutDir}/${SampleID}/${WorkflowType}/${SampleID}_coverage.tsv"
 	>>>
 	output {
-		File CoverageFile = "${OutDir}/${SampleID}/${WorkflowType}/${SampleID}_coverage.tsv"
+		File TsvCoverageFile = "${OutDir}/${SampleID}/${WorkflowType}/${SampleID}_coverage.tsv"
 	}
 }

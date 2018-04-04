@@ -46,6 +46,7 @@
   "wgs.qualimapExe": "/softs/qualimap",
   "wgs.javaExe": "/usr/bin/java",
   "wgs.vcfPolyXJar": "/softs/jvarkit/dist/vcfpolyx.jar",
-  "wgs.vcfHcSuffix": "",
-  "wgs.vcfSISuffix": "final"
+  "wgs.vcfHcSuffix": "raw",
+  "wgs.vcfSISuffix": "unsorted",
+  "wgs.bcfToolsExe": "/usr/local/bin/bcftools"
 }

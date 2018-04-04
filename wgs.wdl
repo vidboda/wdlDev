@@ -12,10 +12,13 @@ import "/home/mobidic/Devs/wdlDev/modules/gatkLeftAlignIndels.wdl" as runGatkLef
 import "/home/mobidic/Devs/wdlDev/modules/gatkGatherBamFiles.wdl" as runGatkGatherBamFiles
 import "/home/mobidic/Devs/wdlDev/modules/sambambaFlagStat.wdl" as runSambambaFlagStat
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectMultipleMetrics.wdl" as runGatkCollectMultipleMetrics
+import "/home/mobidic/Devs/wdlDev/modules/gatkCollectInsertSizeMetrics.wdl" as runGatkCollectInsertSizeMetrics
 #import "/home/mobidic/Devs/wdlDev/modules/collectWgsMetricsWithNonZeroCoverage.wdl" as runCollectWgsMetricsWithNonZeroCoverage
 import "/home/mobidic/Devs/wdlDev/modules/gatkBedToPicardIntervalList.wdl" as runGatkBedToPicardIntervalList
 import "/home/mobidic/Devs/wdlDev/modules/computePoorCoverage.wdl" as runComputePoorCoverage
+import "/home/mobidic/Devs/wdlDev/modules/samtoolsBedCov.wdl" as runSamtoolsBedCov
 import "/home/mobidic/Devs/wdlDev/modules/computeCoverage.wdl" as runComputeCoverage
+import "/home/mobidic/Devs/wdlDev/modules/computeCoverageClamms.wdl" as runComputeCoverageClamms
 import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCollectHsMetrics
 import "/home/mobidic/Devs/wdlDev/modules/gatkHaplotypeCaller.wdl" as runGatkHaplotypeCaller
 import "/home/mobidic/Devs/wdlDev/modules/gatkGatherVcfs.wdl" as runGatkGatherVcfs
@@ -24,8 +27,8 @@ import "/home/mobidic/Devs/wdlDev/modules/jvarkitVcfPolyX.wdl" as runJvarkitVcfP
 import "/home/mobidic/Devs/wdlDev/modules/gatkSplitVcfs.wdl" as runGatkSplitVcfs
 import "/home/mobidic/Devs/wdlDev/modules/gatkVariantFiltrationSnp.wdl" as runGatkVariantFiltrationSnp
 import "/home/mobidic/Devs/wdlDev/modules/gatkVariantFiltrationIndel.wdl" as runGatkVariantFiltrationIndel
-#import "/home/mobidic/Devs/wdlDev/modules/gatkGatherVcfs.wdl" as runGatkGatherVcfs
-
+import "/home/mobidic/Devs/wdlDev/modules/gatkSortVcf.wdl" as runGatkSortVcf
+import "/home/mobidic/Devs/wdlDev/modules/bcftoolsNorm.wdl" as runBcftoolsNorm
 import "/home/mobidic/Devs/wdlDev/modules/cleanUpWgsTmpDirs.wdl" as runCleanUpWgsTmpDirs
 
 workflow wgs {
@@ -49,6 +52,7 @@ workflow wgs {
 	String sambambaExe
 	String bedToolsExe
 	String qualimapExe
+	String bcfToolsExe
 	#standard execs
 	String awkExe
 	String sortExe
@@ -284,6 +288,16 @@ workflow wgs {
 		RefFasta = refFasta,
 		BamFile = gatkGatherBamFiles.finalBam
 	}
+	call runGatkCollectInsertSizeMetrics.gatkCollectInsertSizeMetrics {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		RefFasta = refFasta,
+		BamFile = gatkGatherBamFiles.finalBam
+	}
 	call runQualimapBamQc.qualimapBamQc {
 		input:
 		SrunHigh = srunHigh,
@@ -332,6 +346,17 @@ workflow wgs {
 			BedToolsSmallInterval = bedToolsSmallInterval,
 			BamFile = gatkGatherBamFiles.finalBam
 		}
+		call runSamtoolsBedCov.samtoolsBedCov {
+			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			WorkflowType = workflowType,
+			SamtoolsExe = samtoolsExe,
+			IntervalBedFile = intervalBedFile,
+			BamFile = gatkGatherBamFiles.finalBam,
+			MinCovBamQual = minCovBamQual
+		}
 		call runComputeCoverage.computeCoverage {
 			input:
 			SrunLow = srunLow,
@@ -340,10 +365,17 @@ workflow wgs {
 			WorkflowType = workflowType,
 			AwkExe = awkExe,
 			SortExe = sortExe,
-			SamtoolsExe = samtoolsExe,
-			IntervalBedFile = intervalBedFile,
-			BamFile = gatkGatherBamFiles.finalBam,
-			MinCovBamQual = minCovBamQual
+			BedCovFile = samtoolsBedCov.BedCovFile
+		}
+		call runComputeCoverageClamms.computeCoverageClamms {
+			input:
+			SrunLow = srunLow,
+			SampleID = sampleID,
+			OutDir = outDir,
+			WorkflowType = workflowType,
+			AwkExe = awkExe,
+			SortExe = sortExe,
+			BedCovFile = samtoolsBedCov.BedCovFile
 		}
 		call runGatkCollectHsMetrics.gatkCollectHsMetrics {
 			input:
@@ -452,13 +484,35 @@ workflow wgs {
 		HcVcfs = [gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationIndel.filteredIndelVcf],
 		VcfSuffix = vcfHcSuffix
 	}
+	call runGatkSortVcf.gatkSortVcf {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		UnsortedVcf = gatherSnpIndels.gatheredHcVcf
+	}
+	call runBcftoolsNorm.bcftoolsNorm {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		BcfToolsExe = bcfToolsExe,
+		SortedVcf = gatkSortVcf.sortedVcf
+	}
 	call runCleanUpWgsTmpDirs.cleanUpWgsTmpDirs {
 		input:
 		SrunLow = srunLow,
 		SampleID = sampleID,
 		OutDir = outDir,
 		WorkflowType = workflowType,
-		FinalFile = gatherSnpIndels.gatheredHcVcf
+		FinalVcf = bcftoolsNorm.normVcf,
+		BamArray = [bwaSamtools.sortedBam, sambambaMarkDup.markedBam, sambambaMarkDup.markedBamIndex],
+		FinalBam = gatkLeftAlignIndels.lAlignedBam,
+		VcfArray = [gatkGatherVcfs.gatheredHcVcf, gatkGatherVcfs.gatheredHcVcfIndex, jvarkitVcfPolyX.polyxedVcf, jvarkitVcfPolyX.polyxedVcfIndex, gatkSplitVcfs.snpVcf, gatkSplitVcfs.snpVcfIndex, gatkSplitVcfs.indelVcf, gatkSplitVcfs.indelVcfIndex, gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationSnp.filteredSnpVcfIndex, gatkVariantFiltrationIndel.filteredIndelVcf, gatkVariantFiltrationIndel.filteredIndelVcfIndex, gatkSortVcf.sortedVcf, gatkSortVcf.sortedVcfIndex]
+
 	}
 
 

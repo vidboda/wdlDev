@@ -26,6 +26,6 @@ task gatkVariantFiltrationIndel {
 	}
 	output {
 		File filteredIndelVcf = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.indel.filtered.vcf"
-		File filteredIndelIndex = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.indel.filtered.vcf.idx"
+		File filteredIndelVcfIndex = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.indel.filtered.vcf.idx"
 	}
 }

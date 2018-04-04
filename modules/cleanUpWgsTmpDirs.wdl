@@ -4,7 +4,10 @@ task cleanUpWgsTmpDirs {
 	String SampleID	
 	String OutDir
 	String WorkflowType
-	File FinalFile
+	File FinalVcf
+	Array[File] BamArray
+	File FinalBam
+	Array[File] VcfArray
 	command {
 		if [ -d "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals" ];then \
 			rm -r "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals"; \
@@ -18,5 +21,13 @@ task cleanUpWgsTmpDirs {
 		if [ -d "${OutDir}${SampleID}/${WorkflowType}/vcfs" ];then \
 			rm -r "${OutDir}${SampleID}/${WorkflowType}/vcfs"; \
 		fi
+		rm ${sep=' ' BamArray} 
+		rm ${sep=' ' VcfArray}
+		mv "${FinalBam}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
+		mv "${FinalBam}.bai" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
+	}
+	output {
+#		File finalVcf = ${FinalVcf}
+		File finalBam = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
 	}
 }
