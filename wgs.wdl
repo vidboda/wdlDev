@@ -20,8 +20,11 @@ import "/home/mobidic/Devs/wdlDev/modules/gatkCollectHsMetrics.wdl" as runGatkCo
 import "/home/mobidic/Devs/wdlDev/modules/gatkHaplotypeCaller.wdl" as runGatkHaplotypeCaller
 import "/home/mobidic/Devs/wdlDev/modules/gatkGatherVcfs.wdl" as runGatkGatherVcfs
 import "/home/mobidic/Devs/wdlDev/modules/qualimapBamQc.wdl" as runQualimapBamQc
-
-
+import "/home/mobidic/Devs/wdlDev/modules/jvarkitVcfPolyX.wdl" as runJvarkitVcfPolyX
+import "/home/mobidic/Devs/wdlDev/modules/gatkSplitVcfs.wdl" as runGatkSplitVcfs
+import "/home/mobidic/Devs/wdlDev/modules/gatkVariantFiltrationSnp.wdl" as runGatkVariantFiltrationSnp
+import "/home/mobidic/Devs/wdlDev/modules/gatkVariantFiltrationIndel.wdl" as runGatkVariantFiltrationIndel
+#import "/home/mobidic/Devs/wdlDev/modules/gatkGatherVcfs.wdl" as runGatkGatherVcfs
 
 import "/home/mobidic/Devs/wdlDev/modules/cleanUpWgsTmpDirs.wdl" as runCleanUpWgsTmpDirs
 
@@ -51,6 +54,7 @@ workflow wgs {
 	String sortExe
 	String javaRam
 	String gatkExe
+	String javaExe
 	#fastqc	
 	String fastqcExe
 	String outDir
@@ -74,6 +78,9 @@ workflow wgs {
 	File knownSites2Index
 	File knownSites3
 	File knownSites3Index
+	#gatherVcfs
+	String vcfHcSuffix
+	String vcfSISuffix
 	#gatk-picard
 	File refDict
 	#computePoorCoverage
@@ -83,6 +90,8 @@ workflow wgs {
 	Int minCovBamQual
 	#haplotypeCaller
 	String swMode
+	#jvarkit
+	String vcfPolyXJar
 
 	call runPrepareWgsTmpDirs.prepareWgsTmpDirs {
 		input:
@@ -379,17 +388,77 @@ workflow wgs {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		GatkExe = gatkExe,
-		HcVcfs = hcVcfs
+		HcVcfs = hcVcfs,
+		VcfSuffix = vcfHcSuffix
 	}
-	
+	call runJvarkitVcfPolyX.jvarkitVcfPolyX {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		RefFasta = refFasta,
+		RefFai = refFai,
+		RefDict = refDict,
+		JavaExe = javaExe,
+		VcfPolyXJar = vcfPolyXJar,
+		Vcf = gatkGatherVcfs.gatheredHcVcf,
+		VcfIndex = gatkGatherVcfs.gatheredHcVcfIndex
 
-
+	}
+	call runGatkSplitVcfs.gatkSplitVcfs {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		Vcf = jvarkitVcfPolyX.polyxedVcf,
+		VcfIndex = jvarkitVcfPolyX.polyxedVcfIndex
+	}
+	call runGatkVariantFiltrationSnp.gatkVariantFiltrationSnp {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		RefFasta = refFasta,
+		RefFai = refFai,
+		RefDict = refDict,
+		Vcf = gatkSplitVcfs.snpVcf,
+		VcfIndex = gatkSplitVcfs.snpVcfIndex
+	}
+	call runGatkVariantFiltrationIndel.gatkVariantFiltrationIndel {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		RefFasta = refFasta,
+		RefFai = refFai,
+		RefDict = refDict,
+		Vcf = gatkSplitVcfs.indelVcf,
+		VcfIndex = gatkSplitVcfs.indelVcfIndex
+	}
+	call runGatkGatherVcfs.gatkGatherVcfs as gatherSnpIndels {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GatkExe = gatkExe,
+		HcVcfs = [gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationIndel.filteredIndelVcf],
+		VcfSuffix = vcfHcSuffix
+	}
 	call runCleanUpWgsTmpDirs.cleanUpWgsTmpDirs {
 		input:
 		SrunLow = srunLow,
 		SampleID = sampleID,
 		OutDir = outDir,
-		WorkflowType = workflowType
+		WorkflowType = workflowType,
+		FinalFile = gatherSnpIndels.gatheredHcVcf
 	}
 
 

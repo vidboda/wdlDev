@@ -43,5 +43,9 @@
   "wgs.suffixIndex": "",
   "wgs.suffixIndex2": ".dupmarked.recal.laligned",
   "wgs.swMode": "FASTEST_AVAILABLE",
-  "wgs.qualimapExe": "/softs/qualimap"
+  "wgs.qualimapExe": "/softs/qualimap",
+  "wgs.javaExe": "/usr/bin/java",
+  "wgs.vcfPolyXJar": "/softs/jvarkit/dist/vcfpolyx.jar",
+  "wgs.vcfHcSuffix": "",
+  "wgs.vcfSISuffix": "final"
 }
