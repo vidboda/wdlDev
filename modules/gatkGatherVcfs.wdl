@@ -11,7 +11,7 @@ task gatkGatherVcfs {
 	command {
 		${SrunLow} ${GatkExe} GatherVcfs \
 		-I ${sep=' -I ' HcVcfs} \
-		-O "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.vcf"
+		-O "${OutDir}${SampleID}/${WorkflowType}/${SampleID}${VcfSuffix}.vcf"
 	}
 	output {
 		File gatheredHcVcf = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}${VcfSuffix}.vcf"

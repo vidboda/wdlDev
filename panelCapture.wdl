@@ -27,6 +27,7 @@ import "/home/mobidic/Devs/wdlDev/modules/jvarkitVcfPolyX.wdl" as runJvarkitVcfP
 import "/home/mobidic/Devs/wdlDev/modules/gatkSplitVcfs.wdl" as runGatkSplitVcfs
 import "/home/mobidic/Devs/wdlDev/modules/gatkVariantFiltrationSnp.wdl" as runGatkVariantFiltrationSnp
 import "/home/mobidic/Devs/wdlDev/modules/gatkVariantFiltrationIndel.wdl" as runGatkVariantFiltrationIndel
+import "/home/mobidic/Devs/wdlDev/modules/gatkMergeVcfs.wdl" as runGatkMergeVcfs
 import "/home/mobidic/Devs/wdlDev/modules/gatkSortVcf.wdl" as runGatkSortVcf
 import "/home/mobidic/Devs/wdlDev/modules/bcftoolsNorm.wdl" as runBcftoolsNorm
 import "/home/mobidic/Devs/wdlDev/modules/cleanUpWgsTmpDirs.wdl" as runCleanUpWgsTmpDirs
@@ -355,7 +356,7 @@ workflow panelCapture {
 			SamtoolsExe = samtoolsExe,
 			IntervalBedFile = intervalBedFile,
 			BamFile = gatkGatherBamFiles.finalBam,
-			BamIndex = finalIndexing.bamIndex
+			BamIndex = finalIndexing.bamIndex,
 			MinCovBamQual = minCovBamQual
 		}
 		call runComputeCoverage.computeCoverage {
@@ -475,15 +476,15 @@ workflow panelCapture {
 		Vcf = gatkSplitVcfs.indelVcf,
 		VcfIndex = gatkSplitVcfs.indelVcfIndex
 	}
-	call runGatkGatherVcfs.gatkGatherVcfs as gatherSnpIndels {
+	call runGatkMergeVcfs.gatkMergeVcfs {
 		input:
 		SrunLow = srunLow,
 		SampleID = sampleID,
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		GatkExe = gatkExe,
-		HcVcfs = [gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationIndel.filteredIndelVcf],
-		VcfSuffix = vcfHcSuffix
+		Vcfs = [gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationIndel.filteredIndelVcf],
+		VcfSuffix = vcfSISuffix
 	}
 	call runGatkSortVcf.gatkSortVcf {
 		input:
@@ -492,7 +493,7 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		GatkExe = gatkExe,
-		UnsortedVcf = gatherSnpIndels.gatheredHcVcf
+		UnsortedVcf = gatkMergeVcfs.mergedVcf
 	}
 	call runBcftoolsNorm.bcftoolsNorm {
 		input:
@@ -512,7 +513,7 @@ workflow panelCapture {
 		FinalVcf = bcftoolsNorm.normVcf,
 		BamArray = [bwaSamtools.sortedBam, sambambaMarkDup.markedBam, sambambaMarkDup.markedBamIndex, gatkLeftAlignIndels.lAlignedBam, gatkLeftAlignIndels.lAlignedBamIndex],
 		FinalBam = gatkGatherBamFiles.finalBam,
-		VcfArray = [gatkGatherVcfs.gatheredHcVcf, gatkGatherVcfs.gatheredHcVcfIndex, jvarkitVcfPolyX.polyxedVcf, jvarkitVcfPolyX.polyxedVcfIndex, gatkSplitVcfs.snpVcf, gatkSplitVcfs.snpVcfIndex, gatkSplitVcfs.indelVcf, gatkSplitVcfs.indelVcfIndex, gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationSnp.filteredSnpVcfIndex, gatkVariantFiltrationIndel.filteredIndelVcf, gatkVariantFiltrationIndel.filteredIndelVcfIndex, gatkSortVcf.sortedVcf, gatkSortVcf.sortedVcfIndex]
+		VcfArray = [gatkGatherVcfs.gatheredHcVcf, gatkGatherVcfs.gatheredHcVcfIndex, jvarkitVcfPolyX.polyxedVcf, jvarkitVcfPolyX.polyxedVcfIndex, gatkSplitVcfs.snpVcf, gatkSplitVcfs.snpVcfIndex, gatkSplitVcfs.indelVcf, gatkSplitVcfs.indelVcfIndex, gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationSnp.filteredSnpVcfIndex, gatkVariantFiltrationIndel.filteredIndelVcf, gatkVariantFiltrationIndel.filteredIndelVcfIndex, gatkMergeVcfs.mergedVcf, gatkMergeVcfs.mergedVcfIndex, gatkSortVcf.sortedVcf, gatkSortVcf.sortedVcfIndex]
 
 	}
 

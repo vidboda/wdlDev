@@ -7,6 +7,7 @@ task samtoolsBedCov {
 	#task specific variables
 	File IntervalBedFile
 	File BamFile
+	File BamIndex
 	Int MinCovBamQual
 
 	command {
@@ -16,6 +17,6 @@ task samtoolsBedCov {
 		> "${OutDir}/${SampleID}/${WorkflowType}/${SampleID}_bedcov.bed"
 	}
 	output {
-		File BedCovFile = "${OutDir}/${SampleID}/${WorkflowType}/${SampleID}_coverage.tsv"
+		File BedCovFile = "${OutDir}/${SampleID}/${WorkflowType}/${SampleID}_bedcov.bed"
 	}
 }
