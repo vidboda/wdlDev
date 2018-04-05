@@ -14,6 +14,5 @@ task bcftoolsNorm {
 	}
 	output {
 		File normVcf = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.norm.vcf"
-		File normVcfIndex = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.norm.vcf.idx"
 	}
 }
