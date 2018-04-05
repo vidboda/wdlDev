@@ -8,7 +8,7 @@ task bcftoolsNorm {
 	#task specific variables
 	File SortedVcf
 	command {
-		${SrunLow} ${BcfToolsExe} norm _o v -m - \
+		${SrunLow} ${BcfToolsExe} norm -O v -m - \
 		-o "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.norm.vcf" \
 		${SortedVcf}
 	}
