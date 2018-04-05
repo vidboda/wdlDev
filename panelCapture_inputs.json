@@ -49,4 +49,6 @@
   "panelCapture.vcfHcSuffix": "raw",
   "panelCapture.vcfSISuffix": "merged",
   "panelCapture.bcfToolsExe": "/usr/local/bin/bcftools"
+  "panelCapture.bgZipExe": "/usr/local/bin/bgzip"
+  "panelCapture.tabixExe": "/usr/local/bin/tabix"
 }

@@ -30,6 +30,7 @@ import "/home/mobidic/Devs/wdlDev/modules/gatkVariantFiltrationIndel.wdl" as run
 import "/home/mobidic/Devs/wdlDev/modules/gatkMergeVcfs.wdl" as runGatkMergeVcfs
 import "/home/mobidic/Devs/wdlDev/modules/gatkSortVcf.wdl" as runGatkSortVcf
 import "/home/mobidic/Devs/wdlDev/modules/bcftoolsNorm.wdl" as runBcftoolsNorm
+import "/home/mobidic/Devs/wdlDev/modules/compressIndexVcf.wdl" as runCompressIndexVcf
 import "/home/mobidic/Devs/wdlDev/modules/cleanUpWgsTmpDirs.wdl" as runCleanUpWgsTmpDirs
 
 workflow panelCapture {
@@ -54,6 +55,8 @@ workflow panelCapture {
 	String bedToolsExe
 	String qualimapExe
 	String bcfToolsExe
+	String bgZipExe
+	String tabixExe
 	#standard execs
 	String awkExe
 	String sortExe
@@ -504,13 +507,23 @@ workflow panelCapture {
 		BcfToolsExe = bcfToolsExe,
 		SortedVcf = gatkSortVcf.sortedVcf
 	}
+	call runCompressIndexVcf.compressIndexVcf {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		BgZipExe = bgZipExe,
+		TabixExe = tabixExe,
+		NormVcf = bcftoolsNorm.normVcf
+	}
 	call runCleanUpWgsTmpDirs.cleanUpWgsTmpDirs {
 		input:
 		SrunLow = srunLow,
 		SampleID = sampleID,
 		OutDir = outDir,
 		WorkflowType = workflowType,
-		FinalVcf = bcftoolsNorm.normVcf,
+		FinalVcf = compressIndexVcf.bgZippedVcf,
 		BamArray = [bwaSamtools.sortedBam, sambambaMarkDup.markedBam, sambambaMarkDup.markedBamIndex, gatkLeftAlignIndels.lAlignedBam, gatkLeftAlignIndels.lAlignedBamIndex],
 		FinalBam = gatkGatherBamFiles.finalBam,
 		VcfArray = [gatkGatherVcfs.gatheredHcVcf, gatkGatherVcfs.gatheredHcVcfIndex, jvarkitVcfPolyX.polyxedVcf, jvarkitVcfPolyX.polyxedVcfIndex, gatkSplitVcfs.snpVcf, gatkSplitVcfs.snpVcfIndex, gatkSplitVcfs.indelVcf, gatkSplitVcfs.indelVcfIndex, gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationSnp.filteredSnpVcfIndex, gatkVariantFiltrationIndel.filteredIndelVcf, gatkVariantFiltrationIndel.filteredIndelVcfIndex, gatkMergeVcfs.mergedVcf, gatkMergeVcfs.mergedVcfIndex, gatkSortVcf.sortedVcf, gatkSortVcf.sortedVcfIndex]
