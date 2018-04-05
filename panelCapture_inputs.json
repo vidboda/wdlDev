@@ -23,7 +23,6 @@
   "panelCapture.bedToolsExe" : "/usr/local/bin/bedtools",
   "panelCapture.genomeVersion" : "hg19",
   "panelCapture.intervalBedFile" : "/usr/local/share/refData/examples/Intervals.bed",
-  "panelCapture.isIntervalBedFile" : "true",
   "panelCapture.awkExe" : "/usr/bin/awk",
   "panelCapture.sortExe" : "/usr/bin/sort",
   "panelCapture.bedtoolsLowCoverage" : "20",

@@ -8,12 +8,13 @@ task bedToGatkIntervalList {
 	#task specific variabless
 	String AwkExe
 	File IntervalBedFile
+	Boolean DirsPrepared
 	command <<<
 		${SrunLow} ${AwkExe} 'BEGIN {OFS=""} {print $1,":",$2+1,"-",$3}' \
 		${IntervalBedFile} \
-		> "${OutDir}${SampleID}/${WorkflowType}/Intervals.list"
+		> "${OutDir}${SampleID}/${WorkflowType}/gatkIntervals.list"
 	>>>
 	output {
-		File gatkIntervals = "${OutDir}${SampleID}/${WorkflowType}/Intervals.list"
+		File gatkIntervals = "${OutDir}${SampleID}/${WorkflowType}/gatkIntervals.list"
 	}
 }

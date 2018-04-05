@@ -1,14 +1,14 @@
-task cleanUpWgsTmpDirs {
+task cleanUpPanelCaptureTmpDirs {
 	#global variables
 	String SrunLow
 	String SampleID	
 	String OutDir
 	String WorkflowType
 	File FinalVcf
-	Array[File] BamArray
+	Array[String] BamArray
 	File FinalBam
 	File FinalBamIndex
-	Array[File] VcfArray
+	Array[String] VcfArray
 	command {
 		if [ -d "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals" ];then \
 			rm -r "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals"; \
@@ -22,8 +22,8 @@ task cleanUpWgsTmpDirs {
 		if [ -d "${OutDir}${SampleID}/${WorkflowType}/vcfs" ];then \
 			rm -r "${OutDir}${SampleID}/${WorkflowType}/vcfs"; \
 		fi
-		rm ${sep=' ' BamArray} 
-		rm ${sep=' ' VcfArray}
+		rm ${sep=" " BamArray} 
+		rm ${sep=" " VcfArray}
 		mv "${FinalBam}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
 		mv "${FinalBamIndex}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
 	}

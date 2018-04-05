@@ -12,6 +12,5 @@ task gatkGatherBamFiles {
 	}
 	output {
 		File finalBam = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.dupmarked.recal.laligned.bam"
-		File finalBamIndex = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.dupmarked.recal.laligned.bam.bai"
 	}
 }

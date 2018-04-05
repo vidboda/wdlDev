@@ -1,4 +1,4 @@
-task prepareWgsTmpDirs {
+task preparePanelCaptureTmpDirs {
 	#global variables
 	String SrunLow
 	String SampleID	
@@ -34,6 +34,6 @@ task prepareWgsTmpDirs {
 		fi
 	}
 	output {
-		Boolean prepareDirs = "true"
+		Boolean dirsPrepared = true
 	}
 }

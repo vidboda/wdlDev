@@ -46,7 +46,6 @@ workflow panelCapture {
 	String genomeVersion
 	File refFasta
 	File refFai
-	Boolean isIntervalBedFile
 	File intervalBedFile
 	String workflowType
 	#bioinfo execs
@@ -108,20 +107,22 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType
 	}
+	#if (preparePanelCaptureTmpDirs.dirsPrepared) {
 	call runFastqc.fastqc {
 		input:
 		SrunHigh = srunHigh,
 		Threads = threads,
 		SampleID = sampleID,
-		Suffix1 = suffix1,
-		Suffix2 = suffix2,
-		FastqR1 = fastqR1,
-		FastqR2 = fastqR2,
-		FastqcExe = fastqcExe,
 		OutDir = outDir,
 		WorkflowType = workflowType,
-		PrepareDirs = preparePanelCaptureTmpDirs.prepareDirs
+		FastqcExe = fastqcExe,
+		FastqR1 = fastqR1,
+		FastqR2 = fastqR2,
+		Suffix1 = suffix1,
+		Suffix2 = suffix2,
+		DirsPrepared = preparePanelCaptureTmpDirs.dirsPrepared
 	}
+	#}
 	call runBwaSamtools.bwaSamtools {
 		input: 
 		SrunHigh = srunHigh,
@@ -170,7 +171,8 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		IntervalBedFile = intervalBedFile,
-		AwkExe = awkExe
+		AwkExe = awkExe,
+		DirsPrepared = preparePanelCaptureTmpDirs.dirsPrepared
 	}
 	call runGatkSplitIntervals.gatkSplitIntervals {
 		input:
@@ -315,87 +317,74 @@ workflow panelCapture {
 		BamFile = gatkGatherBamFiles.finalBam,
 		IntervalBedFile = intervalBedFile,
 	}
-#	call runCollectWgsMetricsWithNonZeroCoverage.collectWgsMetricsWithNonZeroCoverage {#too long
-#		input:
-#		SrunLow = srunLow,
-#		SampleID = sampleID,
-#		OutDir = outDir,
-#		WorkflowType = workflowType,
-#		GatkExe = gatkExe,
-#		RefFasta = refFasta,
-#		BamFile = sambambaMarkDup.markedBam
-#	}
-	if (${isIntervalBedFile}) {
-		call runGatkBedToPicardIntervalList.gatkBedToPicardIntervalList {
-			input:
-			SrunLow = srunLow,
-			SampleID = sampleID,
-			OutDir = outDir,
-			WorkflowType = workflowType,
-			IntervalBedFile = intervalBedFile,
-			RefDict = refDict,
-			GatkExe = gatkExe
-		}
-		call runComputePoorCoverage.computePoorCoverage {
-			input:
-			SrunLow = srunLow,
-			SampleID = sampleID,
-			OutDir = outDir,
-			WorkflowType = workflowType,
-			GenomeVersion = genomeVersion,
-			BedToolsExe = bedToolsExe,
-			AwkExe = awkExe,
-			SortExe = sortExe,
-			IntervalBedFile = intervalBedFile,
-			BedtoolsLowCoverage = bedtoolsLowCoverage,
-			BedToolsSmallInterval = bedToolsSmallInterval,
-			BamFile = gatkGatherBamFiles.finalBam
-		}
-		call runSamtoolsBedCov.samtoolsBedCov {
-			input:
-			SrunLow = srunLow,
-			SampleID = sampleID,
-			OutDir = outDir,
-			WorkflowType = workflowType,
-			SamtoolsExe = samtoolsExe,
-			IntervalBedFile = intervalBedFile,
-			BamFile = gatkGatherBamFiles.finalBam,
-			BamIndex = finalIndexing.bamIndex,
-			MinCovBamQual = minCovBamQual
-		}
-		call runComputeCoverage.computeCoverage {
-			input:
-			SrunLow = srunLow,
-			SampleID = sampleID,
-			OutDir = outDir,
-			WorkflowType = workflowType,
-			AwkExe = awkExe,
-			SortExe = sortExe,
-			BedCovFile = samtoolsBedCov.BedCovFile
-		}
-		call runComputeCoverageClamms.computeCoverageClamms {
-			input:
-			SrunLow = srunLow,
-			SampleID = sampleID,
-			OutDir = outDir,
-			WorkflowType = workflowType,
-			AwkExe = awkExe,
-			SortExe = sortExe,
-			BedCovFile = samtoolsBedCov.BedCovFile
-		}
-		call runGatkCollectHsMetrics.gatkCollectHsMetrics {
-			input:
-			SrunLow = srunLow,
-			SampleID = sampleID,
-			OutDir = outDir,
-			WorkflowType = workflowType,
+	call runGatkBedToPicardIntervalList.gatkBedToPicardIntervalList {			input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		IntervalBedFile = intervalBedFile,
+		RefDict = refDict,
+		GatkExe = gatkExe
+	}
+	call runComputePoorCoverage.computePoorCoverage {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		GenomeVersion = genomeVersion,
+		BedToolsExe = bedToolsExe,
+		AwkExe = awkExe,
+		SortExe = sortExe,
+		IntervalBedFile = intervalBedFile,
+		BedtoolsLowCoverage = bedtoolsLowCoverage,
+		BedToolsSmallInterval = bedToolsSmallInterval,
+		BamFile = gatkGatherBamFiles.finalBam
+	}
+	call runSamtoolsBedCov.samtoolsBedCov {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		SamtoolsExe = samtoolsExe,
+		IntervalBedFile = intervalBedFile,
+		BamFile = gatkGatherBamFiles.finalBam,
+		BamIndex = finalIndexing.bamIndex,
+		MinCovBamQual = minCovBamQual
+	}
+	call runComputeCoverage.computeCoverage {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		AwkExe = awkExe,
+		SortExe = sortExe,
+		BedCovFile = samtoolsBedCov.BedCovFile
+	}
+	call runComputeCoverageClamms.computeCoverageClamms {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		AwkExe = awkExe,
+		SortExe = sortExe,
+		BedCovFile = samtoolsBedCov.BedCovFile
+	}
+	call runGatkCollectHsMetrics.gatkCollectHsMetrics {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
 			GatkExe = gatkExe,
-			RefFasta = refFasta,
-			RefFai = refFai,
-			BamFile = gatkGatherBamFiles.finalBam,
-			BaitIntervals = gatkBedToPicardIntervalList.picardIntervals,
-			TargetIntervals = gatkBedToPicardIntervalList.picardIntervals
-		}
+		RefFasta = refFasta,
+		RefFai = refFai,
+		BamFile = gatkGatherBamFiles.finalBam,
+		BaitIntervals = gatkBedToPicardIntervalList.picardIntervals,
+		TargetIntervals = gatkBedToPicardIntervalList.picardIntervals
 	}
 	scatter (interval in gatkSplitIntervals.splittedIntervals) {
 		call runGatkHaplotypeCaller.gatkHaplotypeCaller {
@@ -518,6 +507,7 @@ workflow panelCapture {
 		TabixExe = tabixExe,
 		NormVcf = bcftoolsNorm.normVcf
 	}
+	String dataPath = "${outDir}${sampleID}/${workflowType}/"
 	call runCleanUpPanelCaptureTmpDirs.cleanUpPanelCaptureTmpDirs {
 		input:
 		SrunLow = srunLow,
@@ -525,10 +515,10 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		FinalVcf = compressIndexVcf.bgZippedVcf,
-		BamArray = [bwaSamtools.sortedBam, sambambaMarkDup.markedBam, sambambaMarkDup.markedBamIndex],
+		BamArray = ["${dataPath}" + basename(bwaSamtools.sortedBam), "${dataPath}" + basename(sambambaMarkDup.markedBam), "${dataPath}" + basename(sambambaMarkDup.markedBamIndex)],
 		FinalBam = gatkGatherBamFiles.finalBam,
 		FinalBamIndex = gatkGatherBamFiles.finalBam,
-		VcfArray = [gatkGatherVcfs.gatheredHcVcf, gatkGatherVcfs.gatheredHcVcfIndex, jvarkitVcfPolyX.polyxedVcf, jvarkitVcfPolyX.polyxedVcfIndex, gatkSplitVcfs.snpVcf, gatkSplitVcfs.snpVcfIndex, gatkSplitVcfs.indelVcf, gatkSplitVcfs.indelVcfIndex, gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationSnp.filteredSnpVcfIndex, gatkVariantFiltrationIndel.filteredIndelVcf, gatkVariantFiltrationIndel.filteredIndelVcfIndex, gatkMergeVcfs.mergedVcf, gatkMergeVcfs.mergedVcfIndex, gatkSortVcf.sortedVcf, gatkSortVcf.sortedVcfIndex]
+		VcfArray = ["${dataPath}" + basename(gatkGatherVcfs.gatheredHcVcf), "${dataPath}" + basename(gatkGatherVcfs.gatheredHcVcfIndex), "${dataPath}" + basename(jvarkitVcfPolyX.polyxedVcf), "${dataPath}" + basename(jvarkitVcfPolyX.polyxedVcfIndex), "${dataPath}" + basename(gatkSplitVcfs.snpVcf), "${dataPath}" + basename(gatkSplitVcfs.snpVcfIndex), "${dataPath}" + basename(gatkSplitVcfs.indelVcf), "${dataPath}" + basename(gatkSplitVcfs.indelVcfIndex), "${dataPath}" + basename(gatkVariantFiltrationSnp.filteredSnpVcf), "${dataPath}" + basename(gatkVariantFiltrationSnp.filteredSnpVcfIndex), "${dataPath}" + basename(gatkVariantFiltrationIndel.filteredIndelVcf), "${dataPath}" + basename(gatkVariantFiltrationIndel.filteredIndelVcfIndex), "${dataPath}" + basename(gatkMergeVcfs.mergedVcf), "${dataPath}" + basename(gatkMergeVcfs.mergedVcfIndex), "${dataPath}" + basename(gatkSortVcf.sortedVcf), "${dataPath}" + basename(gatkSortVcf.sortedVcfIndex)]
 
 	}
 
