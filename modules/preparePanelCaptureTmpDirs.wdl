@@ -33,4 +33,7 @@ task prepareWgsTmpDirs {
 			mkdir "${OutDir}${SampleID}/${WorkflowType}/vcfs"; \
 		fi
 	}
+	output {
+		Boolean prepareDirs = "true"
+	}
 }

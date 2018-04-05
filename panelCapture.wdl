@@ -1,4 +1,4 @@
-import "/home/mobidic/Devs/wdlDev/modules/prepareWgsTmpDirs.wdl" as runPrepareWgsTmpDirs
+import "/home/mobidic/Devs/wdlDev/modules/preparePanelCaptureTmpDirs.wdl" as runPreparePanelCaptureTmpDirs
 import "/home/mobidic/Devs/wdlDev/modules/fastqc.wdl" as runFastqc
 import "/home/mobidic/Devs/wdlDev/modules/bwaSamtools.wdl" as runBwaSamtools
 import "/home/mobidic/Devs/wdlDev/modules/sambambaIndex.wdl" as runSambambaIndex
@@ -31,7 +31,7 @@ import "/home/mobidic/Devs/wdlDev/modules/gatkMergeVcfs.wdl" as runGatkMergeVcfs
 import "/home/mobidic/Devs/wdlDev/modules/gatkSortVcf.wdl" as runGatkSortVcf
 import "/home/mobidic/Devs/wdlDev/modules/bcftoolsNorm.wdl" as runBcftoolsNorm
 import "/home/mobidic/Devs/wdlDev/modules/compressIndexVcf.wdl" as runCompressIndexVcf
-import "/home/mobidic/Devs/wdlDev/modules/cleanUpWgsTmpDirs.wdl" as runCleanUpWgsTmpDirs
+import "/home/mobidic/Devs/wdlDev/modules/cleanUpPanelCaptureTmpDirs.wdl" as runCleanUpPanelCaptureTmpDirs
 
 workflow panelCapture {
 	#global
@@ -101,7 +101,7 @@ workflow panelCapture {
 	#jvarkit
 	String vcfPolyXJar
 
-	call runPrepareWgsTmpDirs.prepareWgsTmpDirs {
+	call runPreparePanelCaptureTmpDirs.preparePanelCaptureTmpDirs {
 		input:
 		SrunLow = srunLow,
 		SampleID = sampleID,
@@ -119,7 +119,8 @@ workflow panelCapture {
 		FastqR2 = fastqR2,
 		FastqcExe = fastqcExe,
 		OutDir = outDir,
-		WorkflowType = workflowType
+		WorkflowType = workflowType,
+		PrepareDirs = preparePanelCaptureTmpDirs.prepareDirs
 	}
 	call runBwaSamtools.bwaSamtools {
 		input: 
@@ -324,7 +325,7 @@ workflow panelCapture {
 #		RefFasta = refFasta,
 #		BamFile = sambambaMarkDup.markedBam
 #	}
-	if (isIntervalBedFile) {
+	if (${isIntervalBedFile}) {
 		call runGatkBedToPicardIntervalList.gatkBedToPicardIntervalList {
 			input:
 			SrunLow = srunLow,
@@ -517,15 +518,16 @@ workflow panelCapture {
 		TabixExe = tabixExe,
 		NormVcf = bcftoolsNorm.normVcf
 	}
-	call runCleanUpWgsTmpDirs.cleanUpWgsTmpDirs {
+	call runCleanUpPanelCaptureTmpDirs.cleanUpPanelCaptureTmpDirs {
 		input:
 		SrunLow = srunLow,
 		SampleID = sampleID,
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		FinalVcf = compressIndexVcf.bgZippedVcf,
-		BamArray = [bwaSamtools.sortedBam, sambambaMarkDup.markedBam, sambambaMarkDup.markedBamIndex, gatkLeftAlignIndels.lAlignedBam, gatkLeftAlignIndels.lAlignedBamIndex],
+		BamArray = [bwaSamtools.sortedBam, sambambaMarkDup.markedBam, sambambaMarkDup.markedBamIndex],
 		FinalBam = gatkGatherBamFiles.finalBam,
+		FinalBamIndex = gatkGatherBamFiles.finalBam,
 		VcfArray = [gatkGatherVcfs.gatheredHcVcf, gatkGatherVcfs.gatheredHcVcfIndex, jvarkitVcfPolyX.polyxedVcf, jvarkitVcfPolyX.polyxedVcfIndex, gatkSplitVcfs.snpVcf, gatkSplitVcfs.snpVcfIndex, gatkSplitVcfs.indelVcf, gatkSplitVcfs.indelVcfIndex, gatkVariantFiltrationSnp.filteredSnpVcf, gatkVariantFiltrationSnp.filteredSnpVcfIndex, gatkVariantFiltrationIndel.filteredIndelVcf, gatkVariantFiltrationIndel.filteredIndelVcfIndex, gatkMergeVcfs.mergedVcf, gatkMergeVcfs.mergedVcfIndex, gatkSortVcf.sortedVcf, gatkSortVcf.sortedVcfIndex]
 
 	}

@@ -10,12 +10,15 @@ task fastqc {
 	#task specific variables
 	String Suffix1
 	String Suffix2
-	String FastqcExe	
+	String FastqcExe
+	Boolean PrepareDirs
 	command {
-		${SrunHigh} ${FastqcExe} --threads ${Threads} \
-		${FastqR1} \
-		${FastqR2} \
-		-o "${OutDir}${SampleID}/${WorkflowType}/FastqcDir"
+		if (${PrepareDirs} {
+			${SrunHigh} ${FastqcExe} --threads ${Threads} \
+			${FastqR1} \
+			${FastqR2} \
+			-o "${OutDir}${SampleID}/${WorkflowType}/FastqcDir"
+		}
 	}
 	output {
 		File fastqcZipR1 = "${OutDir}${SampleID}/${WorkflowType}/FastqcDir/${SampleID}${Suffix1}_fastqc.zip"

@@ -7,6 +7,7 @@ task cleanUpWgsTmpDirs {
 	File FinalVcf
 	Array[File] BamArray
 	File FinalBam
+	File FinalBamIndex
 	Array[File] VcfArray
 	command {
 		if [ -d "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals" ];then \
@@ -24,10 +25,10 @@ task cleanUpWgsTmpDirs {
 		rm ${sep=' ' BamArray} 
 		rm ${sep=' ' VcfArray}
 		mv "${FinalBam}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
-		mv "${FinalBam}.bai" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
+		mv "${FinalBamIndex}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
 	}
 	output {
-#		File finalVcf = ${FinalVcf}
 		File finalBam = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
+		File finalVcf = "${FinalVcf}"
 	}
 }
