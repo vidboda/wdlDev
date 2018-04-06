@@ -10,7 +10,7 @@ task bedToGatkIntervalList {
 	File IntervalBedFile
 	Boolean DirsPrepared
 	command <<<
-		${SrunLow} ${AwkExe} 'BEGIN {OFS=""} {print $1,":",$2+1,"-",$3}' \
+		${SrunLow} ${AwkExe} 'BEGIN {OFS=""} {if ($1 !~ /track/) {print $1,":",$2+1,"-",$3}}' \
 		${IntervalBedFile} \
 		> "${OutDir}${SampleID}/${WorkflowType}/intervals/gatkIntervals.list"
 	>>>

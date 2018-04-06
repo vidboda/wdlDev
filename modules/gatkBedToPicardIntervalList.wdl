@@ -18,5 +18,6 @@ task gatkBedToPicardIntervalList {
 	}
 	output {
 		File picardIntervals = "${OutDir}${SampleID}/${WorkflowType}/intervals/picard.interval_list"
+		File bedIntervals = "${OutDir}${SampleID}/${WorkflowType}/intervals/Intervals.bed"
 	}
 }
