@@ -10,9 +10,9 @@ task sambambaFlagStat {
 	File BamFile
 	command {
 		${SrunHigh} ${SambambaExe} flagstat -t ${Threads} \
-		${BamFile} > "${OutDir}${SampleID}/${WorkflowType}/${SampleID}_bam_stats.txt"
+		${BamFile} > "${OutDir}${SampleID}/${WorkflowType}/coverage/${SampleID}_bam_stats.txt"
 	}
 	output {
-		File bamStats = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}_bam_stats.txt"
+		File bamStats = "${OutDir}${SampleID}/${WorkflowType}/coverage/${SampleID}_bam_stats.txt"
 	}
 }

@@ -32,6 +32,12 @@ task preparePanelCaptureTmpDirs {
 		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/vcfs" ];then \
 			mkdir "${OutDir}${SampleID}/${WorkflowType}/vcfs"; \
 		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/intervals" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/intervals"; \
+		fi
+		if [ ! -d "${OutDir}${SampleID}/${WorkflowType}/coverage" ];then \
+			mkdir "${OutDir}${SampleID}/${WorkflowType}/coverage"; \
+		fi
 	}
 	output {
 		Boolean dirsPrepared = true

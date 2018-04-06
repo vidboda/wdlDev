@@ -10,13 +10,13 @@ task gatkBedToPicardIntervalList {
 	#task specific variables
 	File RefDict
 	command {
-		cp ${IntervalBedFile} "${OutDir}${SampleID}/${WorkflowType}/Intervals.bed"
+		cp ${IntervalBedFile} "${OutDir}${SampleID}/${WorkflowType}/intervals/Intervals.bed"
 		${SrunLow} ${GatkExe} BedToIntervalList \
 		-I ${IntervalBedFile} \
-		-O "${OutDir}${SampleID}/${WorkflowType}/picard.interval_list" \
+		-O "${OutDir}${SampleID}/${WorkflowType}/intervals/picard.interval_list" \
 		-SD ${RefDict}
 	}
 	output {
-		File picardIntervals = "${OutDir}${SampleID}/${WorkflowType}/picard.interval_list"
+		File picardIntervals = "${OutDir}${SampleID}/${WorkflowType}/intervals/picard.interval_list"
 	}
 }

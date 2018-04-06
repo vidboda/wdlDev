@@ -32,6 +32,7 @@ import "/home/mobidic/Devs/wdlDev/modules/gatkSortVcf.wdl" as runGatkSortVcf
 import "/home/mobidic/Devs/wdlDev/modules/bcftoolsNorm.wdl" as runBcftoolsNorm
 import "/home/mobidic/Devs/wdlDev/modules/compressIndexVcf.wdl" as runCompressIndexVcf
 import "/home/mobidic/Devs/wdlDev/modules/cleanUpPanelCaptureTmpDirs.wdl" as runCleanUpPanelCaptureTmpDirs
+import "/home/mobidic/Devs/wdlDev/modules/multiqc.wdl" as runMultiqc
 
 workflow panelCapture {
 	#global
@@ -56,6 +57,7 @@ workflow panelCapture {
 	String bcfToolsExe
 	String bgZipExe
 	String tabixExe
+	String multiqcExe
 	#standard execs
 	String awkExe
 	String sortExe
@@ -515,11 +517,19 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		FinalVcf = compressIndexVcf.bgZippedVcf,
-		BamArray = ["${dataPath}" + basename(bwaSamtools.sortedBam), "${dataPath}" + basename(sambambaMarkDup.markedBam), "${dataPath}" + basename(sambambaMarkDup.markedBamIndex)],
-		FinalBam = gatkGatherBamFiles.finalBam,
-		FinalBamIndex = gatkGatherBamFiles.finalBam,
+		BamArray = ["${dataPath}" + basename(sambambaMarkDup.markedBam), "${dataPath}" + basename(sambambaMarkDup.markedBamIndex), "${dataPath}" + basename(gatkGatherBQSRReports.gatheredRecalTable)],
+		FinalBam = "${dataPath}" + basename(gatkGatherBamFiles.finalBam),
+		FinalBamIndex = "${dataPath}" + basename(gatkGatherBamFiles.finalBam),
 		VcfArray = ["${dataPath}" + basename(gatkGatherVcfs.gatheredHcVcf), "${dataPath}" + basename(gatkGatherVcfs.gatheredHcVcfIndex), "${dataPath}" + basename(jvarkitVcfPolyX.polyxedVcf), "${dataPath}" + basename(jvarkitVcfPolyX.polyxedVcfIndex), "${dataPath}" + basename(gatkSplitVcfs.snpVcf), "${dataPath}" + basename(gatkSplitVcfs.snpVcfIndex), "${dataPath}" + basename(gatkSplitVcfs.indelVcf), "${dataPath}" + basename(gatkSplitVcfs.indelVcfIndex), "${dataPath}" + basename(gatkVariantFiltrationSnp.filteredSnpVcf), "${dataPath}" + basename(gatkVariantFiltrationSnp.filteredSnpVcfIndex), "${dataPath}" + basename(gatkVariantFiltrationIndel.filteredIndelVcf), "${dataPath}" + basename(gatkVariantFiltrationIndel.filteredIndelVcfIndex), "${dataPath}" + basename(gatkMergeVcfs.mergedVcf), "${dataPath}" + basename(gatkMergeVcfs.mergedVcfIndex), "${dataPath}" + basename(gatkSortVcf.sortedVcf), "${dataPath}" + basename(gatkSortVcf.sortedVcfIndex)]
-
+	}
+	call runMultiqc.multiqc {
+		input:
+		SrunLow = srunLow,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		MultiqcExe = multiqcExe,
+		Vcf = cleanUpPanelCaptureTmpDirs.finalVcf
 	}
 
 

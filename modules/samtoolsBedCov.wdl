@@ -14,9 +14,9 @@ task samtoolsBedCov {
 		${SrunLow} ${SamtoolsExe} bedcov -Q ${MinCovBamQual} \
 		${IntervalBedFile} \
 		${BamFile} \
-		> "${OutDir}/${SampleID}/${WorkflowType}/${SampleID}_bedcov.bed"
+		> "${OutDir}/${SampleID}/${WorkflowType}/coverage/${SampleID}_bedcov.bed"
 	}
 	output {
-		File BedCovFile = "${OutDir}/${SampleID}/${WorkflowType}/${SampleID}_bedcov.bed"
+		File BedCovFile = "${OutDir}/${SampleID}/${WorkflowType}/coverage/${SampleID}_bedcov.bed"
 	}
 }

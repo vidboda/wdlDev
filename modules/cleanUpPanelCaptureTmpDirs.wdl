@@ -6,8 +6,8 @@ task cleanUpPanelCaptureTmpDirs {
 	String WorkflowType
 	File FinalVcf
 	Array[String] BamArray
-	File FinalBam
-	File FinalBamIndex
+	String FinalBam
+	String FinalBamIndex
 	Array[String] VcfArray
 	command {
 		if [ -d "${OutDir}${SampleID}/${WorkflowType}/splitted_intervals" ];then \
@@ -24,11 +24,12 @@ task cleanUpPanelCaptureTmpDirs {
 		fi
 		rm ${sep=" " BamArray} 
 		rm ${sep=" " VcfArray}
-		mv "${FinalBam}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
-		mv "${FinalBamIndex}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
+		#mv "${FinalBam}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
+		#mv "${FinalBamIndex}" "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam.bai"
 	}
 	output {
-		File finalBam = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
+		File finalBam = "${FinalBam}"
+		File finalBamIndex = "${FinalBamIndex}"
 		File finalVcf = "${FinalVcf}"
 	}
 }

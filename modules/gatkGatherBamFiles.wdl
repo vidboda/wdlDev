@@ -8,9 +8,9 @@ task gatkGatherBamFiles {
 	command {
 		${SrunLow} ${GatkExe} GatherBamFiles \
 		-I ${sep=' -I ' LAlignedBams} \
-		-O "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.dupmarked.recal.laligned.bam"
+		-O "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
 	}
 	output {
-		File finalBam = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.dupmarked.recal.laligned.bam"
+		File finalBam = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.bam"
 	}
 }

@@ -9,10 +9,10 @@ task bcftoolsNorm {
 	File SortedVcf
 	command {
 		${SrunLow} ${BcfToolsExe} norm -O v -m - \
-		-o "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.norm.vcf" \
+		-o "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.vcf" \
 		${SortedVcf}
 	}
 	output {
-		File normVcf = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.norm.vcf"
+		File normVcf = "${OutDir}${SampleID}/${WorkflowType}/${SampleID}.vcf"
 	}
 }

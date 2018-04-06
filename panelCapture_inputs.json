@@ -40,14 +40,15 @@
   "panelCapture.knownSites3Index": "/usr/local/share/refData/dbSNP/138/CORRECT_dbsnp_138.hg19.vcf.gz.tbi",
   "panelCapture.minCovBamQual": "30",
   "panelCapture.suffixIndex": "",
-  "panelCapture.suffixIndex2": ".dupmarked.recal.laligned",
+  "panelCapture.suffixIndex2": "",
   "panelCapture.swMode": "FASTEST_AVAILABLE",
   "panelCapture.qualimapExe": "/softs/qualimap",
   "panelCapture.javaExe": "/usr/bin/java",
   "panelCapture.vcfPolyXJar": "/softs/jvarkit/dist/vcfpolyx.jar",
-  "panelCapture.vcfHcSuffix": "raw",
-  "panelCapture.vcfSISuffix": "merged",
+  "panelCapture.vcfHcSuffix": ".raw",
+  "panelCapture.vcfSISuffix": ".merged",
   "panelCapture.bcfToolsExe": "/usr/local/bin/bcftools",
   "panelCapture.bgZipExe": "/usr/local/bin/bgzip",
-  "panelCapture.tabixExe": "/usr/local/bin/tabix"
+  "panelCapture.tabixExe": "/usr/local/bin/tabix",
+  "panelCapture.multiqcExe": "/usr/bin/multiqc"
 }
