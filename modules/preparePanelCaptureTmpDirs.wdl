@@ -5,6 +5,9 @@ task preparePanelCaptureTmpDirs {
 	String OutDir
 	String WorkflowType
 	command {
+		if [ ! -d "${OutDir}" ];then \
+			mkdir "${OutDir}"; \
+		fi
 		if [ ! -d "${OutDir}${SampleID}" ];then \
 			mkdir "${OutDir}${SampleID}"; \
 		fi
