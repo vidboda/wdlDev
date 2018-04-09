@@ -11,7 +11,7 @@ task gatkBedToPicardIntervalList {
 	#task specific variables
 	Boolean DirsPrepared
 	command {
-		cp ${IntervalBedFile} "${OutDir}${SampleID}/${WorkflowType}/intervals/"
+		cp ${IntervalBedFile} "${OutDir}${SampleID}/${WorkflowType}/intervals/Intervals.bed"
 		${SrunLow} ${GatkExe} BedToIntervalList \
 		-I ${IntervalBedFile} \
 		-O "${OutDir}${SampleID}/${WorkflowType}/intervals/picard.interval_list" \
