@@ -50,6 +50,8 @@ workflow panelCapture {
 	File intervalBedFile
 	String workflowType
 	#bioinfo execs
+	String fastqcExe
+	String bwaExe
 	String samtoolsExe
 	String sambambaExe
 	String bedToolsExe
@@ -65,10 +67,8 @@ workflow panelCapture {
 	String gatkExe
 	String javaExe
 	#fastqc	
-	String fastqcExe
 	String outDir
-	#bwaSamtools
-	String bwaExe
+	#bwaSamtools	
 	String platform
 	File refAmb
 	File refAnn
@@ -326,7 +326,8 @@ workflow panelCapture {
 		WorkflowType = workflowType,
 		IntervalBedFile = intervalBedFile,
 		RefDict = refDict,
-		GatkExe = gatkExe
+		GatkExe = gatkExe,
+		DirsPrepared = preparePanelCaptureTmpDirs.dirsPrepared
 	}
 	call runComputePoorCoverage.computePoorCoverage {
 		input:
