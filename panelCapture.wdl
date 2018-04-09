@@ -10,6 +10,7 @@ import "modules/gatkGatherBQSRReports.wdl" as runGatkGatherBQSRReports
 import "modules/gatkApplyBQSR.wdl" as runGatkApplyBQSR
 import "modules/gatkLeftAlignIndels.wdl" as runGatkLeftAlignIndels
 import "modules/gatkGatherBamFiles.wdl" as runGatkGatherBamFiles
+import "modules/samtoolsSort.wdl" as runSamtoolsSort
 import "modules/sambambaFlagStat.wdl" as runSambambaFlagStat
 import "modules/gatkCollectMultipleMetrics.wdl" as runGatkCollectMultipleMetrics
 import "modules/gatkCollectInsertSizeMetrics.wdl" as runGatkCollectInsertSizeMetrics
@@ -266,6 +267,16 @@ workflow panelCapture {
 		GatkExe = gatkExe,
 		LAlignedBams = lAlignedBams
 	}
+	call runSamtoolsSort.samtoolsSort {
+		input:
+		SrunHigh = srunHigh,
+		Threads = threads,
+		SampleID = sampleID,
+		OutDir = outDir,
+		WorkflowType = workflowType,
+		SamtoolsExe = samtoolsExe,
+		BamFile = gatkGatherBamFiles.gatheredBam
+	}
 	call runSambambaIndex.sambambaIndex as finalIndexing {
 		input:
 		SrunHigh = srunHigh,
@@ -274,7 +285,7 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		SambambaExe = sambambaExe,
-		BamFile = gatkGatherBamFiles.finalBam,
+		BamFile = samtoolsSort.sortedBam,
 		SuffixIndex = suffixIndex2
 	}
 	call runSambambaFlagStat.sambambaFlagStat {
@@ -285,7 +296,7 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		SambambaExe = sambambaExe,		
-		BamFile = gatkGatherBamFiles.finalBam
+		BamFile = samtoolsSort.sortedBam
 	}
 	call runGatkCollectMultipleMetrics.gatkCollectMultipleMetrics {
 		input:
@@ -295,7 +306,7 @@ workflow panelCapture {
 		WorkflowType = workflowType,
 		GatkExe = gatkExe,
 		RefFasta = refFasta,
-		BamFile = gatkGatherBamFiles.finalBam
+		BamFile = samtoolsSort.sortedBam
 	}
 	call runGatkCollectInsertSizeMetrics.gatkCollectInsertSizeMetrics {
 		input:
@@ -305,7 +316,7 @@ workflow panelCapture {
 		WorkflowType = workflowType,
 		GatkExe = gatkExe,
 		RefFasta = refFasta,
-		BamFile = gatkGatherBamFiles.finalBam
+		BamFile = samtoolsSort.sortedBam
 	}
 	call runQualimapBamQc.qualimapBamQc {
 		input:
@@ -316,7 +327,7 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		QualimapExe = qualimapExe,
-		BamFile = gatkGatherBamFiles.finalBam,
+		BamFile = samtoolsSort.sortedBam,
 		IntervalBedFile = intervalBedFile,
 	}
 	call runGatkBedToPicardIntervalList.gatkBedToPicardIntervalList {			input:
@@ -342,7 +353,7 @@ workflow panelCapture {
 		IntervalBedFile = intervalBedFile,
 		BedtoolsLowCoverage = bedtoolsLowCoverage,
 		BedToolsSmallInterval = bedToolsSmallInterval,
-		BamFile = gatkGatherBamFiles.finalBam
+		BamFile = samtoolsSort.sortedBam
 	}
 	call runSamtoolsBedCov.samtoolsBedCov {
 		input:
@@ -352,7 +363,7 @@ workflow panelCapture {
 		WorkflowType = workflowType,
 		SamtoolsExe = samtoolsExe,
 		IntervalBedFile = intervalBedFile,
-		BamFile = gatkGatherBamFiles.finalBam,
+		BamFile = samtoolsSort.sortedBam,
 		BamIndex = finalIndexing.bamIndex,
 		MinCovBamQual = minCovBamQual
 	}
@@ -385,7 +396,7 @@ workflow panelCapture {
 			GatkExe = gatkExe,
 		RefFasta = refFasta,
 		RefFai = refFai,
-		BamFile = gatkGatherBamFiles.finalBam,
+		BamFile = samtoolsSort.sortedBam,
 		BaitIntervals = gatkBedToPicardIntervalList.picardIntervals,
 		TargetIntervals = gatkBedToPicardIntervalList.picardIntervals
 	}
@@ -403,7 +414,7 @@ workflow panelCapture {
 			DbSNP = knownSites3,
 			DbSNPIndex = knownSites3Index,
 			GatkInterval = interval,
-			BamFile = gatkGatherBamFiles.finalBam,
+			BamFile = samtoolsSort.sortedBam,
 			BamIndex = finalIndexing.bamIndex,
 			SwMode = swMode
 		}
@@ -518,9 +529,9 @@ workflow panelCapture {
 		OutDir = outDir,
 		WorkflowType = workflowType,
 		FinalVcf = compressIndexVcf.bgZippedVcf,
-		BamArray = ["${dataPath}" + basename(sambambaMarkDup.markedBam), "${dataPath}" + basename(sambambaMarkDup.markedBamIndex), "${dataPath}" + basename(gatkGatherBQSRReports.gatheredRecalTable)],
-		FinalBam = "${dataPath}" + basename(gatkGatherBamFiles.finalBam),
-		FinalBamIndex = "${dataPath}" + basename(gatkGatherBamFiles.finalBam),
+		BamArray = ["${dataPath}" + basename(sambambaMarkDup.markedBam), "${dataPath}" + basename(sambambaMarkDup.markedBamIndex), "${dataPath}" + basename(gatkGatherBQSRReports.gatheredRecalTable), "${dataPath}" + basename(gatkGatherBamFiles.gatheredBam)],
+		FinalBam = "${dataPath}" + basename(samtoolsSort.sortedBam),
+		FinalBamIndex = "${dataPath}" + basename(finalIndexing.bamIndex),
 		VcfArray = ["${dataPath}" + basename(gatkGatherVcfs.gatheredHcVcf), "${dataPath}" + basename(gatkGatherVcfs.gatheredHcVcfIndex), "${dataPath}" + basename(jvarkitVcfPolyX.polyxedVcf), "${dataPath}" + basename(jvarkitVcfPolyX.polyxedVcfIndex), "${dataPath}" + basename(gatkSplitVcfs.snpVcf), "${dataPath}" + basename(gatkSplitVcfs.snpVcfIndex), "${dataPath}" + basename(gatkSplitVcfs.indelVcf), "${dataPath}" + basename(gatkSplitVcfs.indelVcfIndex), "${dataPath}" + basename(gatkVariantFiltrationSnp.filteredSnpVcf), "${dataPath}" + basename(gatkVariantFiltrationSnp.filteredSnpVcfIndex), "${dataPath}" + basename(gatkVariantFiltrationIndel.filteredIndelVcf), "${dataPath}" + basename(gatkVariantFiltrationIndel.filteredIndelVcfIndex), "${dataPath}" + basename(gatkMergeVcfs.mergedVcf), "${dataPath}" + basename(gatkMergeVcfs.mergedVcfIndex), "${dataPath}" + basename(gatkSortVcf.sortedVcf), "${dataPath}" + basename(gatkSortVcf.sortedVcfIndex)]
 	}
 	call runMultiqc.multiqc {
