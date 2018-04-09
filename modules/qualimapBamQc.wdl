@@ -11,8 +11,8 @@ task qualimapBamQc {
 	File IntervalBedFile
 	File BamFile
 	command {
-		${SrunHigh} ${QualimapExe} bamqc \
-		--java-mem-size=${JavaRam}G \
+		${SrunHigh} ${QualimapExe} \
+		bamqc --java-mem-size=${JavaRam}G \
 		-bam ${BamFile} \
 		-outdir "${OutDir}${SampleID}/${WorkflowType}/qualimap" \
 		-c \
