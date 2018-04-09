@@ -10,7 +10,7 @@ task qualimapBamQc {
 	#task specific variables
 	File IntervalBedFile
 	File BamFile
-	command {
+	command <<<
 		${SrunHigh} ${QualimapExe} \
 		bamqc --java-mem-size=${JavaRam}G \
 		-bam ${BamFile} \
@@ -19,5 +19,5 @@ task qualimapBamQc {
 		--feature-file ${IntervalBedFile} \
 		-nt ${Threads} \
 		-sd
-	}
+	>>>
 }
