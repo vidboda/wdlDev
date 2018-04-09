@@ -1,4 +1,5 @@
 task qualimapBamQc {
+	#see http://qualimap.bioinfo.cipf.es/doc_html/faq.html#command-line if X11 error
 	#global variables
 	String SrunHigh
 	Int Threads
