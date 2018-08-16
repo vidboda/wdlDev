@@ -15,6 +15,7 @@ task gatkHaplotypeCaller {
 	String intervalName = basename("${GatkInterval}", ".intervals")
 	File BamFile
 	File BamIndex
+	Pair[File, File] Bam = (BamFile, BamIndex)
 	String SwMode
 	command {
 		${SrunLow} ${GatkExe} HaplotypeCaller \
