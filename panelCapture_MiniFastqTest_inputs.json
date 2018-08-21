@@ -11,7 +11,6 @@
   "panelCapture.fastqcExe": "/usr/local/bin/fastqc",
   "panelCapture.cpuHigh": "2",
   "panelCapture.refSa": "/usr/local/share/refData/genome/hg19/hg19.fa.sa",
-  "panelCapture.threads": "2",
   "panelCapture.refAmb": "/usr/local/share/refData/genome/hg19/hg19.fa.amb",
   "panelCapture.fastqR2": "/usr/local/share/refData/examples/MiniFastqTest_R2.fastq.gz",
   "panelCapture.outDir": "/home/mobidic/Devs/wdlDev/test_output/",
