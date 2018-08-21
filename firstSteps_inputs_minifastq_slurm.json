@@ -18,6 +18,6 @@
   "firstSteps.fastqR1": "test_input/MiniFastqTest_R1.fastq.gz",
   "firstSteps.bwaSamtools.refPac": "/nfs/work/mobidic/local/share/refData/genome/hg19/hg19.fa.pac",
   "firstSteps.bwaSamtools.refAnn": "/nfs/work/mobidic/local/share/refData/genome/hg19/hg19.fa.ann",
-  "firstSteps.srunLow": "srun -N1 -n1 -c1 --account=IURC --partition=defq  --mem-per-cpu=12288",
-  "firstSteps.srunHigh": "srun -N1 -n1 -c28 --account=IURC --partition=defq"
+  "firstSteps.cpuLow": "srun -N1 -n1 -c1 --account=IURC --partition=defq  --mem-per-cpu=12288",
+  "firstSteps.cpuHigh": "srun -N1 -n1 -c28 --account=IURC --partition=defq"
 }

@@ -12,8 +12,8 @@ workflow firstSteps {
 	File refFai
 	String samtools
 	String sambamba
-	String srunLow
-	String srunHigh
+	String cpuLow
+	String cpuHigh
 	#attempt to run 
 	String remoteCommand
 	#manage different modes
@@ -30,7 +30,7 @@ workflow firstSteps {
 		OutDir = outDir,
 		SampleID = sampleID,
 		Suffix = suffix,
-		Srun = srunHigh
+		Srun = cpuHigh
 	}
 	call bwaSamtools {
 		input: 
@@ -42,7 +42,7 @@ workflow firstSteps {
 		Samtools = samtools,
 		Threads = threads,
 		OutDir = outDir,
-		Srun = srunHigh
+		Srun = cpuHigh
 	}
 	call sambambaMarkDupIndex {
 	  	input:
@@ -51,7 +51,7 @@ workflow firstSteps {
 	    OutDir = outDir,
 	    SortedBam = bwaSamtools.sortedBam,
 	    Sambamba = sambamba,
-	    Srun = srunHigh
+	    Srun = cpuHigh
 	}
 	call sambambaFlagStat {
 		input:
@@ -60,7 +60,7 @@ workflow firstSteps {
 		Threads = threads,
 		MarkedBam = sambambaMarkDupIndex.markedBam,
 		Sambamba = sambamba,
-		Srun = srunHigh
+		Srun = cpuHigh
 	}
 }
 
