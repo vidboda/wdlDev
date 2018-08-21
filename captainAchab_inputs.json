@@ -9,7 +9,7 @@
   "captainAchab.caseSample": "",
   "captainAchab.fatherSample": "",
   "captainAchab.motherSample": "",
-  "captainAchab.diseaseFile": "",
+  "captainAchab.diseaseFile": "/home/mobidic/Devs/wdlDev/test_input/diseaseMiniFastqTest.txt",
   "captainAchab.genesOfInterest": "",
   "captainAchab.filterList":"",
   "captainAchab.cnvGeneList":"",
